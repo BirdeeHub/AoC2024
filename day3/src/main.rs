@@ -37,6 +37,9 @@ impl Parser {
         let mut output:Vec<(i32,i32)> = Vec::new();
         while let Some(c) = self.get_char() {
             match c {
+                'd' => {
+                    self.consume_dont();
+                },
                 'm' => {
                     self.consume_mult(&mut output);
                 },
@@ -44,6 +47,33 @@ impl Parser {
             };
         };
         output
+    }
+    fn consume_dont(&mut self) {
+        let start = self.pos;
+        let startchar = "don't()";
+        while let Some(c) = self.get_char() {
+            let current = &self.input[start..self.pos];
+            if startchar == current {
+                break;
+            }
+            if ! startchar.starts_with(current) {
+                return;
+            }
+            self.advance();
+        }
+        let endchar = "do()";
+        while let Some(_c) = self.get_char() {
+            let remaining = &self.input[self.pos..];
+            if remaining.starts_with(endchar) {
+                let mut count = 0;
+                while count < endchar.len() {
+                    self.advance();
+                    count += 1;
+                }
+                break;
+            }
+            self.advance();
+        }
     }
     fn consume_mult(&mut self, output: &mut Vec<(i32, i32)>) {
         let start = self.pos;
