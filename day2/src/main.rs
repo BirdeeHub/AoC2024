@@ -3,20 +3,12 @@ use std::path::Path;
 use std::io::{self, BufRead, BufReader};
 
 fn main() -> io::Result<()> {
-    // Open the file
     let file = File::open(Path::new("input"))?;
-    
-    // Create a buffered reader
     let reader = BufReader::new(file);
-
     let mut results = Vec::<bool>::new();
-
-    // Iterate over the lines in the file
     for line in reader.lines() {
-        // Handle each line
-        let line = line?; // Unwrap the Result to get the line
+        let line = line?;
         let mut levels = Vec::<i32>::new();
-        // Split the line into words (by whitespace)
         for word in line.split_whitespace() {
             levels.push(word.parse::<i32>().unwrap());
         }
@@ -69,18 +61,17 @@ fn calc(levels: &[i32]) -> bool {
     res
 }
 
-/// Check if levels are safe with the Problem Dampener
 fn calc_with_dampener(levels: &[i32]) -> bool {
     if calc(levels) {
         return true; // Already safe
     }
 
-    // Try removing each level to see if it becomes safe
+    // brute force hackery
     for i in 0..levels.len() {
         let mut reduced_levels = levels.to_vec();
         reduced_levels.remove(i);
         if calc(&reduced_levels) {
-            return true; // Safe after removing one level
+            return true;
         }
     }
 
