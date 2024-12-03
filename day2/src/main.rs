@@ -15,19 +15,7 @@ fn main() -> io::Result<()> {
         results.push(calc_with_dampener(&levels));
     }
 
-    let mut count = 0;
-    let mut count2 = 0;
-
-    for res in results {
-        if res {
-            count += 1;
-        } else {
-            count2 += 1;
-        }
-    };
-
-    println!("nice {}", count);
-    println!("naughty {}", count2);
+    println!("nice {}", results.iter().filter(|x| **x).count());
 
     Ok(())
 }
