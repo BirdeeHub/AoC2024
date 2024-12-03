@@ -20,7 +20,7 @@ fn main() -> io::Result<()> {
         for word in line.split_whitespace() {
             levels.push(word.parse::<i32>().unwrap());
         }
-        results.push(calc(levels));
+        results.push(calc_with_dampener(&levels));
     }
 
     let mut count = 0;
@@ -40,7 +40,7 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn calc(levels: Vec<i32>) -> bool {
+fn calc(levels: &[i32]) -> bool {
     let mut last = 0;
     let mut last_diff = 0;
     let mut res = true;
@@ -67,4 +67,22 @@ fn calc(levels: Vec<i32>) -> bool {
         };
     };
     res
+}
+
+/// Check if levels are safe with the Problem Dampener
+fn calc_with_dampener(levels: &[i32]) -> bool {
+    if calc(levels) {
+        return true; // Already safe
+    }
+
+    // Try removing each level to see if it becomes safe
+    for i in 0..levels.len() {
+        let mut reduced_levels = levels.to_vec();
+        reduced_levels.remove(i);
+        if calc(&reduced_levels) {
+            return true; // Safe after removing one level
+        }
+    }
+
+    false // Unsafe even with the dampener
 }
