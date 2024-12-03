@@ -43,12 +43,12 @@ fn main() -> io::Result<()> {
 fn calc(levels: Vec<i32>) -> bool {
     let mut last = 0;
     let mut last_diff = 0;
-    let mut first = true;
+    let mut idx = 0;
     let mut res = true;
     for level in &levels {
-        if first {
+        if idx == 0 {
             last = *level;
-            first = false;
+            idx += 1;
         } else {
             if ! res { break; };
             let diff = level - last;
