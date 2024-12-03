@@ -36,6 +36,7 @@ fn calc(levels: &[i32]) -> bool {
     let mut last = 0;
     let mut last_diff = 0;
     let mut res = true;
+    let mut chance = true;
     for (idx, level) in levels.iter().enumerate() {
         if idx == 0 {
             last = *level;
@@ -54,8 +55,13 @@ fn calc(levels: &[i32]) -> bool {
                 },
                 _ => {},
             };
-            last = *level;
-            last_diff = diff;
+            if chance && !res {
+                res = true;
+                chance = false;
+            } else {
+                last = *level;
+                last_diff = diff;
+            }
         };
     };
     res
@@ -63,17 +69,14 @@ fn calc(levels: &[i32]) -> bool {
 
 fn calc_with_dampener(levels: &[i32]) -> bool {
     if calc(levels) {
-        return true; // Already safe
+        return true;
     }
-
-    // brute force hackery
-    for i in 0..levels.len() {
-        let mut reduced_levels = levels.to_vec();
-        reduced_levels.remove(i);
-        if calc(&reduced_levels) {
-            return true;
-        }
-    }
-
-    false // Unsafe even with the dampener
+    // we cant deal with if the first val is the bad one.
+    // So we try it forwards and backwards and if 1 is true, then we're good
+    let mut reversed = levels.to_vec();
+    reversed.reverse();
+    if calc(&reversed) {
+        return true;
+    };
+    false
 }
