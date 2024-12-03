@@ -4,20 +4,14 @@ use std::path::Path;
 use std::io::{self, BufRead, BufReader};
 
 fn main() -> io::Result<()> {
-    // Open the file
     let file = File::open(Path::new("input"))?;
-    
-    // Create a buffered reader
     let reader = BufReader::new(file);
 
     let mut left: Vec<i64> = Vec::new();
     let mut right: Vec<i64> = Vec::new();
 
-    // Iterate over the lines in the file
     for line in reader.lines() {
-        // Handle each line
-        let line = line?; // Unwrap the Result to get the line
-        // Split the line into words (by whitespace)
+        let line = line?;
         let mut list = 0;
         for word in line.split_whitespace() {
             if list == 0 {
