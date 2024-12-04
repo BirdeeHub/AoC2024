@@ -2,8 +2,7 @@ use std::fs::File;
 use std::io::{self, BufRead, BufReader};
 
 fn main() -> io::Result<()> {
-    let file = File::open("input")?;
-    let reader = BufReader::new(file);
+    let reader = BufReader::new(File::open("input")?);
     let mut results = Vec::<bool>::new();
     for line in reader.lines() {
         results.push(calc_with_dampener(
