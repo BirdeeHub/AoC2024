@@ -1,4 +1,5 @@
 use std::fs::File;
+use std::time::Instant;
 use std::io::{self, Read};
 
 fn read_file(file_path: &str) -> io::Result<String> {
@@ -8,12 +9,15 @@ fn read_file(file_path: &str) -> io::Result<String> {
 }
 
 fn main() -> io::Result<()> {
+    let start = Instant::now();
     let filestr = read_file("input")?;
 
     let mut parser = Parser::new(filestr);
     let output = parser.parse();
     let res = output.iter().map(|(k,v)|k*v).sum::<i32>();
-    println!("{:?}", res);
+    println!("{}", res);
+    let duration = start.elapsed();
+    println!("Time taken: {:?}", duration);
 
     Ok(())
 }

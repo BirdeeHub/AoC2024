@@ -13,7 +13,7 @@
       in foldl' op attrs (attrNames ret);
     in foldl' op { } nixpkgs.lib.platforms.all;
 
-    APPNAME = "crabby";
+    APPNAME = "day2";
     appOverlay = final: prev: {
       # any pkgs overrides made here will be inherited in the arguments of default.nix
       # because we used final.callPackage instead of prev.callPackage

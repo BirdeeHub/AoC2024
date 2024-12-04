@@ -1,9 +1,11 @@
 use std::fs::File;
+use std::time::Instant;
 use std::collections::HashMap;
 use std::path::Path;
 use std::io::{self, BufRead, BufReader};
 
 fn main() -> io::Result<()> {
+    let start = Instant::now();
     let file = File::open(Path::new("input"))?;
     let reader = BufReader::new(file);
 
@@ -24,7 +26,9 @@ fn main() -> io::Result<()> {
         }
     }
 
-    println!("{:?}",calc(left, right));
+    println!("{}",calc(left, right));
+    let duration = start.elapsed();
+    println!("Time taken: {:?}", duration);
     
     Ok(())
 }

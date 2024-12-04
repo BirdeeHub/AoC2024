@@ -1,7 +1,9 @@
 use std::fs::File;
+use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
 
 fn main() -> io::Result<()> {
+    let start = Instant::now();
     let reader = BufReader::new(File::open("input")?);
     let mut results = Vec::<bool>::new();
     for line in reader.lines() {
@@ -13,6 +15,8 @@ fn main() -> io::Result<()> {
         ));
     }
     println!("{}", results.iter().filter(|x| **x).count());
+    let duration = start.elapsed();
+    println!("Time taken: {:?}", duration);
     Ok(())
 }
 
