@@ -12,12 +12,25 @@ fn main() -> io::Result<()> {
         for word in line.split_whitespace() {
             levels.push(word.parse::<i32>().unwrap());
         }
-        results.push(calc_with_dampener(&levels));
+        results.push(calc_with_dampener(&mut levels));
     }
 
     println!("nice {}", results.iter().filter(|x| **x).count());
 
     Ok(())
+}
+
+fn calc_with_dampener(levels: &mut [i32]) -> bool {
+    if calc(levels) {
+        return true;
+    }
+    // we cant deal with if the first val is the bad one.
+    // So we try it forwards and backwards and if 1 is true, then we're good
+    levels.reverse();
+    if calc(levels) {
+        return true;
+    };
+    false
 }
 
 fn calc(levels: &[i32]) -> bool {
@@ -53,18 +66,4 @@ fn calc(levels: &[i32]) -> bool {
         };
     };
     res
-}
-
-fn calc_with_dampener(levels: &[i32]) -> bool {
-    if calc(levels) {
-        return true;
-    }
-    // we cant deal with if the first val is the bad one.
-    // So we try it forwards and backwards and if 1 is true, then we're good
-    let mut reversed = levels.to_vec();
-    reversed.reverse();
-    if calc(&reversed) {
-        return true;
-    };
-    false
 }
