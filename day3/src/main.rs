@@ -66,7 +66,7 @@ impl Parser {
             self.advance();
         }
         let endchar = "do()";
-        while let Some(_c) = self.get_char() {
+        while self.get_char().is_some() {
             let remaining = &self.input[self.pos..];
             if remaining.starts_with(endchar) {
                 let mut count = 0;
