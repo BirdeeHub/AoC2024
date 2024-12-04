@@ -16,8 +16,7 @@ fn main() -> io::Result<()> {
     let output = parser.parse();
     let res = output.iter().map(|(k,v)|k*v).sum::<i32>();
     println!("{}", res);
-    let duration = start.elapsed();
-    println!("Time taken: {:?}", duration);
+    println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
 }

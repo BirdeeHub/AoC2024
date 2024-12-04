@@ -15,8 +15,7 @@ fn main() -> io::Result<()> {
         ));
     }
     println!("{}", results.iter().filter(|x| **x).count());
-    let duration = start.elapsed();
-    println!("Time taken: {:?}", duration);
+    println!("Time taken: {:?}", start.elapsed());
     Ok(())
 }
 

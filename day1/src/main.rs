@@ -27,8 +27,7 @@ fn main() -> io::Result<()> {
     }
 
     println!("{}",calc(left, right));
-    let duration = start.elapsed();
-    println!("Time taken: {:?}", duration);
+    println!("Time taken: {:?}", start.elapsed());
     
     Ok(())
 }
