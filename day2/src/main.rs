@@ -1,35 +1,28 @@
 use std::fs::File;
-use std::path::Path;
 use std::io::{self, BufRead, BufReader};
 
 fn main() -> io::Result<()> {
-    let file = File::open(Path::new("input"))?;
+    let file = File::open("input")?;
     let reader = BufReader::new(file);
     let mut results = Vec::<bool>::new();
     for line in reader.lines() {
-        let line = line?;
-        let mut levels = Vec::<i32>::new();
-        for word in line.split_whitespace() {
-            levels.push(word.parse::<i32>().unwrap());
-        }
-        results.push(calc_with_dampener(&mut levels));
+        results.push(calc_with_dampener(
+            &mut line?
+                .split_whitespace()
+                .map(|x| x.parse::<i32>().unwrap())
+                .collect::<Vec<i32>>(),
+        ));
     }
-
-    println!("nice {}", results.iter().filter(|x| **x).count());
-
+    println!("{}", results.iter().filter(|x| **x).count());
     Ok(())
 }
 
+// we cant deal with if the first val is the bad one.
+// So we try it forwards and backwards and if 1 is true, then we're good
 fn calc_with_dampener(levels: &mut [i32]) -> bool {
-    if calc(levels) {
-        return true;
-    }
-    // we cant deal with if the first val is the bad one.
-    // So we try it forwards and backwards and if 1 is true, then we're good
+    if calc(levels) { return true; }
     levels.reverse();
-    if calc(levels) {
-        return true;
-    };
+    if calc(levels) { return true; };
     false
 }
 
@@ -42,15 +35,12 @@ fn calc(levels: &[i32]) -> bool {
         if idx == 0 {
             last = *level;
         } else {
-            if ! res { break; };
+            if !res { break; };
             let diff = level - last;
-            if last_diff > 0 && diff < 0 {
-                res = false;
-            }
-            if last_diff < 0 && diff > 0 {
-                res = false;
-            }
             match diff {
+                _ if (last_diff > 0 && diff < 0) || (last_diff < 0 && diff > 0) => {
+                    res = false;
+                },
                 _ if diff.abs() < 1 || diff.abs() > 3 => {
                     res = false;
                 },
