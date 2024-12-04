@@ -55,7 +55,7 @@ impl Parser {
     fn consume_dont(&mut self) {
         let start = self.pos;
         let startchar = "don't()";
-        while let Some(c) = self.get_char() {
+        while self.get_char().is_some() {
             let current = &self.input[start..self.pos];
             if startchar == current {
                 break;
@@ -82,7 +82,7 @@ impl Parser {
     fn consume_mult(&mut self, output: &mut Vec<(i32, i32)>) {
         let start = self.pos;
         let mul = "mul(";
-        while let Some(c) = self.get_char() {
+        while self.get_char().is_some() {
             let current = &self.input[start..self.pos];
             if mul == current {
                 break;
