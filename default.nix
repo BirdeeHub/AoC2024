@@ -17,6 +17,6 @@ APPDRV = rustPlatform.buildRustPackage {
 };
 in
 writeShellScriptBin APPNAME ''
-  export AOC_INPUT=./${APPNAME}/input;
+  export AOC_INPUT=''${1:-./${APPNAME}/input};
   exec ${APPDRV}/bin/${APPNAME}
 ''
