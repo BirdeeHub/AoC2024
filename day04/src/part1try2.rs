@@ -18,10 +18,25 @@ pub fn run() -> io::Result<()> {
 
     let mut xmas_count = 0;
 
+    let directions = [
+        (1,1),
+        (-1,1),
+        (1,-1),
+        (-1,-1),
+        (0,1),
+        (1,0),
+        (-1,0),
+        (0,-1),
+    ];
+
     for x in 0..board.len() {
         for y in 0..board[0].len() {
             if board[x][y] == 'X' {
-                xmas_count += calc(&board, x as i32, y as i32);
+                let rows = board.len() as i32;
+                let cols = board[0].len() as i32;
+                for (dx,dy) in directions {
+                    xmas_count += check_direction(&board, rows, cols, x as i32, y as i32, dx, dy)
+                }
             }
         }
     }
@@ -45,23 +60,4 @@ fn check_direction(board: &[Vec<char>], rows: i32, cols: i32, x: i32, y: i32, dx
         idx += 1;
     }
     if idx==4 {1} else {0}
-}
-fn calc(board: &[Vec<char>], x: i32, y: i32) -> u32 {
-    let directions = [
-        (1,1),
-        (-1,1),
-        (1,-1),
-        (-1,-1),
-        (0,1),
-        (1,0),
-        (-1,0),
-        (0,-1),
-    ];
-    let rows = board.len() as i32;
-    let cols = board[0].len() as i32;
-    let mut count = 0;
-    for (dx,dy) in directions {
-        count += check_direction(board, rows, cols, x, y, dx, dy)
-    }
-    count
 }
