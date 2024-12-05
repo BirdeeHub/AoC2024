@@ -30,7 +30,7 @@ pub fn run() -> io::Result<()> {
         }
     }
 
-    println!("{}", middles.iter().sum::<u32>());
+    println!("Part 1 (first try): {}", middles.iter().sum::<u32>());
 
     println!("Time taken: {:?}", start.elapsed());
 
