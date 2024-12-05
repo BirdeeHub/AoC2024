@@ -25,9 +25,7 @@ pub fn run() -> io::Result<()> {
 
     for update in updatepages {
         if ! matches_rules(&rules, &update) {
-            println!("{:?}", update);
             let fixed = reorder_update(&rules, &update);
-            println!("{:?}", fixed);
             let middleidx = (fixed.len()-1)/2;
             middles.push(fixed[middleidx]);
         }
@@ -58,7 +56,20 @@ fn matches_rules(rules: &[(u32, u32)], update: &[u32]) -> bool {
 }
 
 fn reorder_update(rules: &[(u32, u32)], update: &[u32]) -> Vec<u32> {
-    let mut final_update = Vec::new();
+    let mut final_update = update.to_vec();
+
+    while ! matches_rules(rules,&final_update) {
+        for (pre,post) in rules {
+            if final_update.contains(pre) && final_update.contains(post) {
+                let prepos = final_update.iter().position(|x|x==pre).unwrap();
+                let postpos = final_update.iter().position(|x|x==post).unwrap();
+                if prepos > postpos {
+                    final_update.remove(prepos);
+                    final_update.insert(postpos,*pre);
+                }
+            }
+        }
+    }
 
     final_update
 }
