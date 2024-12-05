@@ -33,8 +33,7 @@ pub fn run() -> io::Result<()> {
         if update == fixed {
             let middleidx = (fixed.len()-1)/2;
             mids_p1.push(fixed[middleidx]);
-        };
-        if update != fixed {
+        } else {
             let middleidx = (fixed.len()-1)/2;
             mids_p2.push(fixed[middleidx]);
         };
