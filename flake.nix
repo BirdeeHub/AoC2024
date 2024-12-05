@@ -16,8 +16,6 @@
     days = nixpkgs.lib.filterAttrs (n: v: v == "directory") (builtins.readDir ./.);
 
     appOverlay = final: prev: builtins.mapAttrs (n: v: {
-      # any pkgs overrides made here will be inherited in the arguments of default.nix
-      # because we used final.callPackage instead of prev.callPackage
       ${n} = final.callPackage ./. ({ APPNAME = n; src = ./${n}; } // inputs);
     }) days;
   in {
