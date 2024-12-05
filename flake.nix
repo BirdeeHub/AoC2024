@@ -30,6 +30,17 @@
       all = pkgs.symlinkJoin {
         name = "all-solutions";
         paths = paths;
+        postBuild = ''
+          mkdir -p $out/bin;
+          cat > $out/bin/run_all <<EOFTAG
+          for script in ${pkgs.lib.escapeShellArgs (builtins.map (v: "${v}/bin/${pkgs.lib.getName v}") paths)}; do
+            echo;
+            echo "\$script";
+            bash -c "\$script";
+          done
+          EOFTAG
+          chmod +x $out/bin/run_all
+        '';
       };
     in{
       packages = { default = all; } // allset;
