@@ -27,13 +27,14 @@
       pkgs = import nixpkgs { inherit system; overlays = [ appOverlay ]; };
       allset = builtins.mapAttrs (n: _: pkgs.${n}) days;
       paths = with builtins; concatLists (map attrValues (map (n: pkgs.${n}) (attrNames days)));
+      binpaths = builtins.map (v: "${v}/bin/${pkgs.lib.getName v}") paths;
       all = pkgs.symlinkJoin {
         name = "all-solutions";
-        paths = paths;
+        inherit paths;
         postBuild = ''
           mkdir -p $out/bin;
           cat > $out/bin/run_all <<EOFTAG
-          for script in ${pkgs.lib.escapeShellArgs (builtins.map (v: "${v}/bin/${pkgs.lib.getName v}") paths)}; do
+          for script in ${pkgs.lib.escapeShellArgs binpaths}; do
             echo;
             echo "\$script";
             bash -c "\$script";
