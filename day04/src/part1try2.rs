@@ -26,7 +26,7 @@ pub fn run() -> io::Result<()> {
         }
     }
 
-    println!("total XMAS: {}", xmas_count);
+    println!("part1 try2 total XMAS: {}", xmas_count);
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
