@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::time::Instant;
 use std::io::{self, Read};
+use std::env;
 
 fn read_file(file_path: &str) -> io::Result<String> {
     let mut contents = String::new();
@@ -10,7 +11,8 @@ fn read_file(file_path: &str) -> io::Result<String> {
 
 fn main() -> io::Result<()> {
     let start = Instant::now();
-    let filestr = read_file("input")?;
+    let inputvar = env::var("AOC_INPUT").expect("AOC_INPUT not set");
+    let filestr = read_file(&inputvar)?;
 
     let mut parser = Parser::new(filestr);
     let output = parser.parse();

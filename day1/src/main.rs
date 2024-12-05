@@ -1,12 +1,13 @@
 use std::fs::File;
 use std::time::Instant;
 use std::collections::HashMap;
-use std::path::Path;
 use std::io::{self, BufRead, BufReader};
+use std::env;
 
 fn main() -> io::Result<()> {
     let start = Instant::now();
-    let file = File::open(Path::new("input"))?;
+    let inputvar = env::var("AOC_INPUT").expect("AOC_INPUT not set");
+    let file = File::open(inputvar)?;
     let reader = BufReader::new(file);
 
     let mut left: Vec<i32> = Vec::new();

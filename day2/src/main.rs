@@ -1,10 +1,12 @@
 use std::fs::File;
 use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
+use std::env;
 
 fn main() -> io::Result<()> {
     let start = Instant::now();
-    let reader = BufReader::new(File::open("input")?);
+    let inputvar = env::var("AOC_INPUT").expect("AOC_INPUT not set");
+    let reader = BufReader::new(File::open(inputvar)?);
     let mut results = Vec::<bool>::new();
     for line in reader.lines() {
         results.push(calc_with_dampener(

@@ -1,10 +1,12 @@
 use std::fs::File;
 use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
+use std::env;
 
 pub fn run() -> io::Result<()> {
     let start = Instant::now();
-    let file = File::open("input")?;
+    let inputvar = env::var("AOC_INPUT").expect("AOC_INPUT not set");
+    let file = File::open(inputvar)?;
     let reader = BufReader::new(file);
 
     let mut wordsearch:Vec<Vec<char>> = Vec::new();

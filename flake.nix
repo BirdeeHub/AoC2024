@@ -13,21 +13,26 @@
       in foldl' op attrs (attrNames ret);
     in foldl' op { } nixpkgs.lib.platforms.all;
 
-    APPNAME = "day4";
-    appOverlay = final: prev: {
+    days = nixpkgs.lib.filterAttrs (n: v: v == "directory") (builtins.readDir ./.);
+
+    appOverlay = final: prev: builtins.mapAttrs (n: v: {
       # any pkgs overrides made here will be inherited in the arguments of default.nix
       # because we used final.callPackage instead of prev.callPackage
-      ${APPNAME} = final.callPackage ./. ({ inherit APPNAME; } // inputs);
-    };
+      ${n} = final.callPackage ./. ({ APPNAME = n; src = ./${n}; } // inputs);
+    }) days;
   in {
     overlays.default = appOverlay;
   } // (
     forEachSystem (system: let
       pkgs = import nixpkgs { inherit system; overlays = [ appOverlay ]; };
-    in{
-      packages = {
-        default = pkgs.${APPNAME};
+      allset = builtins.mapAttrs (n: _: pkgs.${n}) days;
+      paths = with builtins; concatLists (map attrValues (map (n: pkgs.${n}) (attrNames days)));
+      all = pkgs.symlinkJoin {
+        name = "all-solutions";
+        paths = paths;
       };
+    in{
+      packages = { default = all; } // allset;
     })
   );
 }
