@@ -8,23 +8,18 @@ pub fn run() -> io::Result<()> {
     let file = File::open("input")?;
     let reader = BufReader::new(file);
 
-    let mut rules = Vec::new();
     let mut updatepages:Vec<Vec<u32>> = Vec::new();
+    let mut graph:HashMap<u32,Vec<u32>> = HashMap::new();
 
     for line in reader.lines() {
         let line = line?;
         if line.contains("|") {
             let (pre,post) = line.split_once("|").unwrap();
-            rules.push((pre.parse::<u32>().unwrap(),post.parse::<u32>().unwrap()));
+            graph.entry(pre.parse::<u32>().unwrap()).or_default().push(post.parse::<u32>().unwrap());
         }
         if line.contains(",") {
             updatepages.push(line.split(",").map(|x|x.parse::<u32>().unwrap()).collect());
         }
-    }
-
-    let mut graph:HashMap<u32,Vec<u32>> = HashMap::new();
-    for (pre,post) in &rules {
-        graph.entry(*pre).or_default().push(*post);
     }
     for posts in graph.values_mut() {
         posts.dedup();
@@ -56,7 +51,7 @@ pub fn run() -> io::Result<()> {
 fn toposort_update(rules: &HashMap<u32, Vec<u32>>, update: &[u32]) -> Vec<u32> {
     let mut final_update = Vec::new();
 
-    // Step 1: Compute in-degrees for nodes in `update`
+    // Step 1: Compute in-degrees for nodes in update
     let mut in_degree = HashMap::new();
     for &page in update {
         in_degree.entry(page).or_insert(0); // Initialize all nodes with 0 in-degree
@@ -97,7 +92,7 @@ fn toposort_update(rules: &HashMap<u32, Vec<u32>>, update: &[u32]) -> Vec<u32> {
         }
     }
 
-    //// Step 4: Handle any remaining pages from `update` not processed (e.g., disconnected nodes)
+    //// Step 4: Handle any remaining pages
     for &page in update {
         if !final_update.contains(&page) {
             final_update.push(page);
