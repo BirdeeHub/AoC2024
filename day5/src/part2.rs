@@ -24,9 +24,9 @@ pub fn run() -> io::Result<()> {
     let mut middles = Vec::new();
 
     for update in updatepages {
-        if matches_rules(&rules, &update) {
-            let middleidx = (update.len()-1)/2;
-            middles.push(update[middleidx]);
+        if ! matches_rules(&rules, &update) {
+            println!("{:?} is not a valid update", update);
+            // TODO: fixem and push middle to middles
         }
     }
 
