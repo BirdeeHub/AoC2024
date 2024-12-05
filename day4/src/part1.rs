@@ -2,7 +2,7 @@ use std::fs::File;
 use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
 
-fn main() -> io::Result<()> {
+pub fn run() -> io::Result<()> {
     let start = Instant::now();
     let file = File::open("input")?;
     let reader = BufReader::new(file);
