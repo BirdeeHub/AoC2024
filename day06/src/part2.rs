@@ -1,9 +1,15 @@
 use std::fs::File;
+use std::collections::HashSet;
 use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
 use std::env;
 
 use crate::types::*;
+
+fn deduplicate_vec<T: Eq + std::hash::Hash>(vec: Vec<T>) -> Vec<T> {
+    let set: HashSet<_> = vec.into_iter().collect();
+    set.into_iter().collect()
+}
 
 pub fn run() -> io::Result<()> {
     let start = Instant::now();
@@ -51,7 +57,7 @@ pub fn run() -> io::Result<()> {
     let mut continue_moving = true;
     while continue_moving {
         (continue_moving, _) = move_guard(&mut room_with_guard, &mut trail);
-        //print_room(&room)
+        //print_room(&room_with_guard)
     }
 
     let mut obstacles = Vec::new();
@@ -60,6 +66,7 @@ pub fn run() -> io::Result<()> {
             obstacles.push(obs);
         }
     }
+    obstacles = deduplicate_vec(obstacles);
 
     println!("locations: {:?}",obstacles);
     println!("number: {:?}",obstacles.len());
@@ -100,19 +107,17 @@ fn check_right_for_loop(room: &mut [Vec<RoomSpace>], trail: &[(Direction,(usize,
         room[position.0][position.1] = RoomSpace::Guard(direction.clone());
         room[obsx][obsy] = RoomSpace::Obstacle;
         let mut continue_moving = true;
-        let mut checkpoint:Option<(Direction,(usize,usize))> = None;
+        let mut checkpoints = Vec::new();
         while continue_moving {
             let loc;
             (continue_moving, loc) = move_guard(room, &mut Vec::new());
-            if let Some(location) = &checkpoint {
-                if location == &loc {
-                    println!("Found loop!");
-                    println!("curr: {:?} check: {:?}", loc, location);
-                    return Some((obsx,obsy))
-                }
+            if continue_moving && checkpoints.contains(&loc) {
+                println!("{:?}",loc);
+                return Some((obsx,obsy))
             }
-            if continue_moving && trail.contains(&loc) && checkpoint.is_none() {
-                checkpoint = Some(loc.clone());
+            print_room(room);
+            if continue_moving && trail.contains(&loc) {
+                checkpoints.push(loc.clone());
             }
         }
     };
@@ -145,11 +150,11 @@ fn move_guard(room: &mut [Vec<RoomSpace>], trail: &mut Vec<(Direction,(usize,usi
         if direction == newdirection {
             room[newspace.0][newspace.1] = RoomSpace::Guard(newdirection.clone());
             trail.push((newdirection.clone(),newspace));
-            (true, (newdirection,guard_pos))
-        } else if let Some(newplace) = get_newspace(room, guard_pos, &direction) {
+            (true, (newdirection,newspace))
+        } else if let Some(newplace) = get_newspace(room, guard_pos, &newdirection) {
             room[newplace.0][newplace.1] = RoomSpace::Guard(newdirection.clone());
             trail.push((newdirection.clone(),newplace));
-            (true, (newdirection,guard_pos))
+            (true, (newdirection,newplace))
         } else {
             (false, (newdirection,guard_pos))
         }
