@@ -95,6 +95,18 @@ fn get_newspace(room: &[Vec<RoomSpace>], pos: (usize,usize), direction: &Directi
     }
 }
 
+fn get_newspace_with_obstacle(room: &[Vec<RoomSpace>], pos: (usize,usize), direction: &Direction) -> Option<(Direction,(usize, usize))> {
+    if let Some(newplace) = get_newspace(room, pos, direction) {
+        if room[newplace.0][newplace.1] == RoomSpace::Obstacle {
+            get_newspace_with_obstacle(room, pos, &turn_right(direction))
+        } else {
+            Some((direction.clone(),newplace))
+        }
+    } else {
+        None
+    }
+}
+
 fn turn_right(direction: &Direction) -> Direction {
     match direction {
         Direction::Up => Direction::Right,
@@ -146,22 +158,10 @@ fn move_guard(room: &mut [Vec<RoomSpace>], trail: &mut Vec<(Direction,(usize,usi
         return (false, (direction,guard_pos))
     }
     room[guard_pos.0][guard_pos.1] = RoomSpace::Visited;
-    if let Some(newspace) = get_newspace(room, guard_pos, &direction) {
-        let newdirection = match room[newspace.0][newspace.1] {
-            RoomSpace::Obstacle => turn_right(&direction),
-            _ => direction.clone(),
-        };
-        if direction == newdirection {
-            room[newspace.0][newspace.1] = RoomSpace::Guard(newdirection.clone());
-            trail.push((newdirection.clone(),newspace));
-            (true, (newdirection,newspace))
-        } else if let Some(newplace) = get_newspace(room, guard_pos, &newdirection) {
-            room[newplace.0][newplace.1] = RoomSpace::Guard(newdirection.clone());
-            trail.push((newdirection.clone(),newplace));
-            (true, (newdirection,newplace))
-        } else {
-            (false, (newdirection,guard_pos))
-        }
+    if let Some((dir,newspace)) = get_newspace_with_obstacle(room, guard_pos, &direction) {
+        room[newspace.0][newspace.1] = RoomSpace::Guard(dir.clone());
+        trail.push((dir.clone(),newspace));
+        (true, (dir,newspace))
     } else {
         (false, (direction,guard_pos))
     }
