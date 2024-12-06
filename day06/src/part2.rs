@@ -103,6 +103,9 @@ fn turn_right(direction: &Direction) -> Direction {
 }
 
 fn check_right_for_loop(room: &mut [Vec<RoomSpace>], trail: &[(Direction,(usize,usize))], position: (usize,usize), direction: &Direction) -> Option<(usize,usize)> {
+    if room[position.0][position.1] == RoomSpace::Obstacle {
+        return None;
+    }
     if let Some((obsx,obsy)) = get_newspace(room, position, direction) {
         room[position.0][position.1] = RoomSpace::Guard(direction.clone());
         room[obsx][obsy] = RoomSpace::Obstacle;
@@ -112,10 +115,8 @@ fn check_right_for_loop(room: &mut [Vec<RoomSpace>], trail: &[(Direction,(usize,
             let loc;
             (continue_moving, loc) = move_guard(room, &mut Vec::new());
             if continue_moving && checkpoints.contains(&loc) {
-                println!("{:?}",loc);
                 return Some((obsx,obsy))
             }
-            print_room(room);
             if continue_moving && trail.contains(&loc) {
                 checkpoints.push(loc.clone());
             }
