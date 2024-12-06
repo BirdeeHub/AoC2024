@@ -30,8 +30,8 @@ impl Display for RoomSpace {
                 Direction::Right => ">",
             },
             RoomSpace::Obstacle => "#",
-            RoomSpace::Visited => "x",
-            RoomSpace::Empty => ".",
+            RoomSpace::Visited => ".",
+            RoomSpace::Empty => " ",
         })
     }
 }
