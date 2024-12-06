@@ -34,16 +34,29 @@ pub fn run() -> io::Result<()> {
     };
     room = newroom;
 
+    let mut room_with_guard = room.clone();
+    let guardless_room: Vec<Vec<RoomSpace>> = room
+        .iter()
+        .map(|row| {
+            row.iter()
+                .map(|space| match space {
+                    RoomSpace::Guard(_) => RoomSpace::Empty,
+                    _ => space.clone(),
+                })
+                .collect()
+        })
+        .collect();
+
     let mut trail:Vec<(Direction,(usize,usize))> = Vec::new();
     let mut continue_moving = true;
     while continue_moving {
-        continue_moving = move_guard(&mut room, &mut trail);
+        continue_moving = move_guard(&mut room_with_guard, &mut trail);
         //print_room(&room)
     }
 
     let mut obstacles = Vec::new();
     for (dir, (x,y)) in trail.iter() {
-        if let Some(obs) = check_right_for_loop(&room, &trail, (*x,*y), dir.clone()) {
+        if let Some(obs) = check_right_for_loop(&guardless_room.clone(), &trail, (*x,*y), dir.clone()) {
             obstacles.push(obs);
         }
     }
@@ -56,7 +69,35 @@ pub fn run() -> io::Result<()> {
     Ok(())
 }
 
+fn get_newspace(room: &[Vec<RoomSpace>], pos: (usize,usize), direction: Direction) -> Option<(usize, usize)> {
+    match direction {
+        Direction::Up => {
+            if pos.1 > 0 { Some((pos.0, pos.1 - 1)) } else { None }
+        },
+        Direction::Down => {
+            if pos.1 + 1 < room[pos.0].len() { Some((pos.0, pos.1 + 1)) } else { None }
+        },
+        Direction::Right => {
+            if pos.0 + 1 < room.len() { Some((pos.0 + 1, pos.1)) } else { None }
+        },
+        Direction::Left => {
+            if pos.0 > 0 { Some((pos.0 - 1, pos.1)) } else { None }
+        },
+    }
+}
+
+fn turn_right(direction: &Direction) -> Direction {
+    match direction {
+        Direction::Up => Direction::Right,
+        Direction::Right => Direction::Down,
+        Direction::Down => Direction::Left,
+        Direction::Left => Direction::Up,
+    }
+}
+
 fn check_right_for_loop(room: &[Vec<RoomSpace>], trail: &[(Direction,(usize,usize))], pos: (usize,usize), direction: Direction) -> Option<(usize,usize)> {
+    if let Some((obsx,obsy)) = get_newspace(room, pos, direction) {
+    };
     None
 }
 
@@ -78,39 +119,16 @@ fn move_guard(room: &mut [Vec<RoomSpace>], trail: &mut Vec<(Direction,(usize,usi
         return false
     }
     room[guard_pos.0][guard_pos.1] = RoomSpace::Visited;
-    let get_newspace = |dir| {
-        match dir {
-            Direction::Up => {
-                if guard_pos.1 > 0 { Some((guard_pos.0, guard_pos.1 - 1)) } else { None }
-            },
-            Direction::Down => {
-                if guard_pos.1 + 1 < room[guard_pos.0].len() { Some((guard_pos.0, guard_pos.1 + 1)) } else { None }
-            },
-            Direction::Right => {
-                if guard_pos.0 + 1 < room.len() { Some((guard_pos.0 + 1, guard_pos.1)) } else { None }
-            },
-            Direction::Left => {
-                if guard_pos.0 > 0 { Some((guard_pos.0 - 1, guard_pos.1)) } else { None }
-            },
-        }
-    };
-    if let Some(newspace) = get_newspace(direction.clone()) {
+    if let Some(newspace) = get_newspace(room, guard_pos, direction.clone()) {
         let newdirection = match room[newspace.0][newspace.1] {
-            RoomSpace::Obstacle => {
-                match direction {
-                    Direction::Up => Direction::Right,
-                    Direction::Right => Direction::Down,
-                    Direction::Down => Direction::Left,
-                    Direction::Left => Direction::Up,
-                }
-            },
+            RoomSpace::Obstacle => turn_right(&direction),
             _ => direction.clone(),
         };
         if direction == newdirection {
             room[newspace.0][newspace.1] = RoomSpace::Guard(newdirection.clone());
             trail.push((newdirection,newspace));
             true
-        } else if let Some(newplace) = get_newspace(newdirection.clone()) {
+        } else if let Some(newplace) = get_newspace(room, guard_pos, direction.clone()) {
             room[newplace.0][newplace.1] = RoomSpace::Guard(newdirection.clone());
             trail.push((newdirection,newplace));
             true
