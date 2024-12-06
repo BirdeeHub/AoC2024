@@ -50,13 +50,13 @@ pub fn run() -> io::Result<()> {
     let mut trail:Vec<(Direction,(usize,usize))> = Vec::new();
     let mut continue_moving = true;
     while continue_moving {
-        continue_moving = move_guard(&mut room_with_guard, &mut trail);
+        (continue_moving, _) = move_guard(&mut room_with_guard, &mut trail);
         //print_room(&room)
     }
 
     let mut obstacles = Vec::new();
     for (dir, (x,y)) in trail.iter() {
-        if let Some(obs) = check_right_for_loop(&guardless_room.clone(), &trail, (*x,*y), dir) {
+        if let Some(obs) = check_right_for_loop(&mut guardless_room.clone(), &trail, (*x,*y), dir) {
             obstacles.push(obs);
         }
     }
@@ -95,13 +95,19 @@ fn turn_right(direction: &Direction) -> Direction {
     }
 }
 
-fn check_right_for_loop(room: &[Vec<RoomSpace>], trail: &[(Direction,(usize,usize))], position: (usize,usize), direction: &Direction) -> Option<(usize,usize)> {
+fn check_right_for_loop(room: &mut [Vec<RoomSpace>], trail: &[(Direction,(usize,usize))], position: (usize,usize), direction: &Direction) -> Option<(usize,usize)> {
     if let Some((obsx,obsy)) = get_newspace(room, position, direction) {
+        room[position.0][position.1] = RoomSpace::Guard(turn_right(direction));
+        let mut continue_moving = true;
+        while continue_moving {
+            let pos;
+            (continue_moving, pos) = move_guard(room, &mut Vec::new());
+        }
     };
     None
 }
 
-fn move_guard(room: &mut [Vec<RoomSpace>], trail: &mut Vec<(Direction,(usize,usize))>) -> bool {
+fn move_guard(room: &mut [Vec<RoomSpace>], trail: &mut Vec<(Direction,(usize,usize))>) -> (bool,(usize,usize)) {
     let mut guard_pos = (room.len(),room[0].len());
     let mut direction = Direction::Up;
     for (i, _) in room.iter().enumerate() {
@@ -116,7 +122,7 @@ fn move_guard(room: &mut [Vec<RoomSpace>], trail: &mut Vec<(Direction,(usize,usi
         }
     }
     if guard_pos.0 >= room.len() || guard_pos.1 >= room[0].len() {
-        return false
+        return (false, guard_pos)
     }
     room[guard_pos.0][guard_pos.1] = RoomSpace::Visited;
     if let Some(newspace) = get_newspace(room, guard_pos, &direction) {
@@ -127,15 +133,15 @@ fn move_guard(room: &mut [Vec<RoomSpace>], trail: &mut Vec<(Direction,(usize,usi
         if direction == newdirection {
             room[newspace.0][newspace.1] = RoomSpace::Guard(newdirection.clone());
             trail.push((newdirection,newspace));
-            true
+            (true, guard_pos)
         } else if let Some(newplace) = get_newspace(room, guard_pos, &direction) {
             room[newplace.0][newplace.1] = RoomSpace::Guard(newdirection.clone());
             trail.push((newdirection,newplace));
-            true
+            (true, guard_pos)
         } else {
-            false
+            (false, guard_pos)
         }
     } else {
-        false
+        (false, guard_pos)
     }
 }
