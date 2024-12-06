@@ -34,22 +34,33 @@ pub fn run() -> io::Result<()> {
     };
     room = newroom;
 
+    let mut trail:Vec<(Direction,(usize,usize))> = Vec::new();
     let mut continue_moving = true;
     while continue_moving {
-        continue_moving = move_guard(&mut room);
-        print_room(&room)
+        continue_moving = move_guard(&mut room, &mut trail);
+        //print_room(&room)
     }
+
+    let mut obstacles = Vec::new();
+    for (dir, (x,y)) in trail.iter() {
+        if let Some(obs) = check_right_for_loop(&room, &trail, (*x,*y), dir.clone()) {
+            obstacles.push(obs);
+        }
+    }
+
+    println!("locations: {:?}",obstacles);
+    println!("number: {:?}",obstacles.len());
     
-    let visited = room.iter().flat_map(|row| row.iter()).filter(|&cell| cell == &RoomSpace::Visited).count();
-
-    println!("total visited: {}", visited);
-
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
 }
 
-fn move_guard(room: &mut [Vec<RoomSpace>]) -> bool {
+fn check_right_for_loop(room: &[Vec<RoomSpace>], trail: &[(Direction,(usize,usize))], pos: (usize,usize), direction: Direction) -> Option<(usize,usize)> {
+    None
+}
+
+fn move_guard(room: &mut [Vec<RoomSpace>], trail: &mut Vec<(Direction,(usize,usize))>) -> bool {
     let mut guard_pos = (room.len(),room[0].len());
     let mut direction = Direction::Up;
     for (i, _) in room.iter().enumerate() {
@@ -96,10 +107,12 @@ fn move_guard(room: &mut [Vec<RoomSpace>]) -> bool {
             _ => direction.clone(),
         };
         if direction == newdirection {
-            room[newspace.0][newspace.1] = RoomSpace::Guard(newdirection);
+            room[newspace.0][newspace.1] = RoomSpace::Guard(newdirection.clone());
+            trail.push((newdirection,newspace));
             true
         } else if let Some(newplace) = get_newspace(newdirection.clone()) {
-            room[newplace.0][newplace.1] = RoomSpace::Guard(newdirection);
+            room[newplace.0][newplace.1] = RoomSpace::Guard(newdirection.clone());
+            trail.push((newdirection,newplace));
             true
         } else {
             false
