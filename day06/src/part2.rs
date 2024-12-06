@@ -104,11 +104,8 @@ fn check_right_for_loop(room: &mut [Vec<RoomSpace>], trail: &[(Direction,(usize,
         while continue_moving {
             let loc;
             (continue_moving, loc) = move_guard(room, &mut Vec::new());
-            if let Some((dir,(x,y))) = &checkpoint {
-                println!("curr: {:?} check: {:?} ({},{})", loc, dir, x, y);
-                if *dir == loc.0 && *x == loc.1.0 && *y == loc.1.1 {
-                    println!("Found loop!");
-                    println!("curr: {:?} check: {:?} ({},{})", loc, dir, x, y);
+            if let Some(location) = &checkpoint {
+                if location == &loc {
                     return Some((obsx,obsy))
                 }
             }
