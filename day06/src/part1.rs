@@ -37,8 +37,9 @@ impl Display for RoomSpace {
         })
     }
 }
-
 fn print_room(room: &[Vec<RoomSpace>]) {
+    thread::sleep(Duration::from_millis(250));
+    println!();
     if room.is_empty() {
         return;
     }
@@ -85,8 +86,6 @@ pub fn run() -> io::Result<()> {
     let mut continue_moving = true;
     while continue_moving {
         continue_moving = move_guard(&mut room);
-        //thread::sleep(Duration::from_millis(500));
-        //println!();
         //print_room(&room)
     }
     
