@@ -62,7 +62,7 @@ pub fn run() -> io::Result<()> {
 
     let mut obstacles = Vec::new();
     for (i,(dir, (x,y))) in trail.iter().enumerate() {
-        println!("{} / {}",i,trail.len());
+        println!("{} / {}",i+1,trail.len());
         if let Some(obs) = check_right_for_loop(&mut guardless_room.clone(), &trail, (*x,*y), dir) {
             obstacles.push(obs);
         }
