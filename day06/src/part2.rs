@@ -76,6 +76,7 @@ pub fn run() -> io::Result<()> {
         }
         room.push(row);
     }
+    // fix x and y...
     let mut newroom = Vec::new();
     for i in 0..room[0].len() {
         let mut newrow = Vec::new();
