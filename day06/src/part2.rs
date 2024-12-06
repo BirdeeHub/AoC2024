@@ -64,7 +64,7 @@ pub fn run() -> io::Result<()> {
     for (i,(dir, (x,y))) in trail.iter().enumerate() {
         println!("{} / {}",i,trail.len());
         println!("{:?} {:?}",dir,(*x,*y));
-        if let Some(obs) = check_right_for_loop(&mut guardless_room.clone(), (*x,*y), dir) {
+        if let Some(obs) = check_right_for_loop(&mut guardless_room.clone(), &trail, (*x,*y), dir) {
             obstacles.push(obs);
         }
     }
@@ -104,7 +104,7 @@ fn turn_right(direction: &Direction) -> Direction {
     }
 }
 
-fn check_right_for_loop(room: &mut [Vec<RoomSpace>], position: (usize,usize), direction: &Direction) -> Option<(usize,usize)> {
+fn check_right_for_loop(room: &mut [Vec<RoomSpace>], trail: &[(Direction,(usize,usize))], position: (usize,usize), direction: &Direction) -> Option<(usize,usize)> {
     if let Some((obsx,obsy)) = get_newspace(room, position, direction) {
         if room[obsx][obsy] == RoomSpace::Obstacle {
             return None;
@@ -115,11 +115,12 @@ fn check_right_for_loop(room: &mut [Vec<RoomSpace>], position: (usize,usize), di
         let mut checkpoints = Vec::new();
         while continue_moving {
             let loc;
-            (continue_moving, loc) = move_guard(room, &mut Vec::new());
+            let mut checktail = Vec::new();
+            (continue_moving, loc) = move_guard(room, &mut checktail);
             if continue_moving && checkpoints.contains(&loc) {
                 return Some((obsx,obsy))
             }
-            if continue_moving {
+            if continue_moving && (trail.contains(&loc) || checktail.contains(&loc)) {
                 checkpoints.push(loc.clone());
             }
         }
