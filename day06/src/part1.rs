@@ -1,6 +1,4 @@
 use std::fs::File;
-use std::time::Duration;
-use std::thread;
 use std::fmt::{Display, Formatter};
 use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
@@ -37,6 +35,8 @@ impl Display for RoomSpace {
         })
     }
 }
+use std::time::Duration;
+use std::thread;
 fn print_room(room: &[Vec<RoomSpace>]) {
     thread::sleep(Duration::from_millis(250));
     println!();
