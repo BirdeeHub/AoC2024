@@ -30,8 +30,8 @@ impl Display for RoomSpace {
                 Direction::Right => ">",
             },
             RoomSpace::Obstacle => "#",
-            RoomSpace::Visited => "x",
-            RoomSpace::Empty => ".",
+            RoomSpace::Visited => ".",
+            RoomSpace::Empty => " ",
         })
     }
 }
@@ -39,7 +39,7 @@ use std::time::Duration;
 use std::thread;
 fn print_room(room: &[Vec<RoomSpace>]) {
     thread::sleep(Duration::from_millis(250));
-    println!();
+    println!("{}","-".repeat(room[0].len()));
     if room.is_empty() {
         return;
     }
@@ -53,6 +53,7 @@ fn print_room(room: &[Vec<RoomSpace>]) {
             .collect();
         println!("{}", row);
     }
+    println!("{}","-".repeat(room[0].len()));
 }
 
 pub fn run() -> io::Result<()> {
@@ -86,7 +87,7 @@ pub fn run() -> io::Result<()> {
     let mut continue_moving = true;
     while continue_moving {
         continue_moving = move_guard(&mut room);
-        //print_room(&room)
+        print_room(&room)
     }
     
     let visited = room.iter().flat_map(|row| row.iter()).filter(|&cell| cell == &RoomSpace::Visited).count();

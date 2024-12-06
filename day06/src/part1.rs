@@ -39,7 +39,7 @@ use std::time::Duration;
 use std::thread;
 fn print_room(room: &[Vec<RoomSpace>]) {
     thread::sleep(Duration::from_millis(250));
-    println!();
+    println!("{}","-".repeat(room[0].len()));
     if room.is_empty() {
         return;
     }
@@ -53,6 +53,7 @@ fn print_room(room: &[Vec<RoomSpace>]) {
             .collect();
         println!("{}", row);
     }
+    println!("{}","-".repeat(room[0].len()));
 }
 
 pub fn run() -> io::Result<()> {
