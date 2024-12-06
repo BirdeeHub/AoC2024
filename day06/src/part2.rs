@@ -106,6 +106,9 @@ fn turn_right(direction: &Direction) -> Direction {
 
 fn check_right_for_loop(room: &mut [Vec<RoomSpace>], position: (usize,usize), direction: &Direction) -> Option<(usize,usize)> {
     if let Some((obsx,obsy)) = get_newspace(room, position, direction) {
+        if room[obsx][obsy] == RoomSpace::Obstacle {
+            return None;
+        }
         room[position.0][position.1] = RoomSpace::Guard(direction.clone());
         room[obsx][obsy] = RoomSpace::Obstacle;
         let mut continue_moving = true;
