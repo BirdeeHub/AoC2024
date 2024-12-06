@@ -128,7 +128,9 @@ fn check_right_for_loop(room: &mut [Vec<RoomSpace>], trail: &[(Direction,(usize,
             let loc;
             let mut checktail = Vec::new();
             (continue_moving, loc) = move_guard(room, &mut checktail);
+            print_room(room);
             if continue_moving && checkpoints.contains(&loc) {
+                println!("{:?}", loc);
                 return Some((obsx,obsy))
             }
             if continue_moving && (trail.contains(&loc) || checktail.contains(&loc)) {
