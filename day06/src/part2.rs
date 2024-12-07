@@ -145,12 +145,14 @@ fn check_right_for_loop(room: &mut [Vec<RoomSpace>], position: (usize,usize), di
         }
         room[position.0][position.1] = RoomSpace::Guard(direction.clone());
         room[obsx][obsy] = RoomSpace::Obstacle;
+        println!("({},{})",obsx,obsy);
         let mut continue_moving = true;
         let mut checkpoints = Vec::new();
         let mut checktrail = Vec::new();
         while continue_moving {
             continue_moving = move_guard(room, &mut checktrail);
-            print_room(room, 10);
+            //print_room(room, 500);
+            println!("({},{})",obsx,obsy);
             if continue_moving && checkpoints.contains(checktrail.last().unwrap()) {
                 println!("LOOP! {:?} obs: {} {}", checktrail.last().unwrap(),obsx,obsy);
                 return Some((obsx,obsy))
