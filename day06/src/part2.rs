@@ -11,7 +11,7 @@ fn deduplicate_vec<T: Eq + std::hash::Hash>(vec: Vec<T>) -> Vec<T> {
     set.into_iter().collect()
 }
 
-pub fn run(expected:usize) -> io::Result<()> {
+pub fn run(expected:Vec<(usize,usize)>) -> io::Result<()> {
     let start = Instant::now();
     let inputvar = env::var("AOC_INPUT").expect("AOC_INPUT not set");
     let file = File::open(inputvar)?;
@@ -71,7 +71,7 @@ pub fn run(expected:usize) -> io::Result<()> {
 
     println!("locations: {:?}",obstacles);
     println!("number: {:?}",obstacles.len());
-    println!("{}", if obstacles.len() != expected { format!("FAIL, expected {}", expected) } else { "PASS".to_string() });
+    println!("{}", if obstacles.len() != expected.len() { format!("FAIL, expected {}, with values {:?}", expected.len(), expected) } else { "PASS".to_string() });
     
     println!("Time taken: {:?}", start.elapsed());
 

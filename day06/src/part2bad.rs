@@ -11,7 +11,7 @@ fn deduplicate_vec<T: Eq + std::hash::Hash>(vec: Vec<T>) -> Vec<T> {
     set.into_iter().collect()
 }
 
-pub fn run() -> io::Result<usize> {
+pub fn run() -> io::Result<Vec<(usize,usize)>> {
     let start = Instant::now();
     let inputvar = env::var("AOC_INPUT").expect("AOC_INPUT not set");
     let file = File::open(inputvar)?;
