@@ -18,11 +18,20 @@ pub fn run() -> io::Result<()> {
         equations.push((ans.parse::<i64>().unwrap(), values));
     }
 
-    for equation in equations {
-        println!("{:?}", equation);
+    let mut calibration_total = 0;
+    for (answer, values) in equations {
+        if check_equation(answer, values) {
+            calibration_total += answer;
+        }
     }
 
+    println!("Calibration total: {}", calibration_total);
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
+}
+
+fn check_equation(answer: i64, values: Vec<i64>) -> bool {
+    println!("{:?} = {:?}", answer, values);
+    true
 }
