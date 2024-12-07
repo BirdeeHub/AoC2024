@@ -57,7 +57,7 @@ pub fn run() -> io::Result<()> {
     let mut continue_moving = true;
     while continue_moving {
         continue_moving = move_guard(&mut room_with_guard, &mut trail);
-        //print_room(&room_with_guard, 100)
+        //print_room(&room_with_guard, 250)
     }
 
     let mut obstacles = Vec::new();
@@ -128,7 +128,6 @@ fn check_right_for_loop(room: &mut [Vec<RoomSpace>], position: (usize,usize), di
         let mut checktrail = Vec::new();
         while continue_moving {
             continue_moving = move_guard(room, &mut checktrail);
-            print_room(room, 250);
             if continue_moving && checkpoints.contains(checktrail.last().unwrap()) {
                 return Some((obsx,obsy))
             }
