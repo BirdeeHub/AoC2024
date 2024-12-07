@@ -71,7 +71,29 @@ pub fn run(expected:Vec<(usize,usize)>) -> io::Result<()> {
 
     println!("locations: {:?}",obstacles);
     println!("number: {:?}",obstacles.len());
-    println!("{}", if obstacles.len() != expected.len() { format!("FAIL, expected {}, with values {:?}", expected.len(), expected) } else { "PASS".to_string() });
+    println!( "{}",
+        if obstacles.len() != expected.len() || obstacles != expected {
+            let extra: Vec<_> = obstacles.iter().skip(expected.len()).collect();
+            let missing: Vec<_> = expected.iter().skip(obstacles.len()).collect();
+            format!(
+                "FAIL, expected {}{}{}",
+                expected.len(),
+                if !extra.is_empty() {
+                    format!(", extra in obstacles: {:?}", extra)
+                } else {
+                    String::new()
+                },
+                if !missing.is_empty() {
+                    format!(", missing in obstacles: {:?}", missing)
+                } else {
+                    String::new()
+                },
+            )
+        } else {
+            "PASS".to_string()
+        }
+    );
+
     
     println!("Time taken: {:?}", start.elapsed());
 
@@ -128,7 +150,7 @@ fn check_right_for_loop(room: &mut [Vec<RoomSpace>], position: (usize,usize), di
         let mut checktrail = Vec::new();
         while continue_moving {
             continue_moving = move_guard(room, &mut checktrail);
-            print_room(room, 500);
+            print_room(room, 10);
             if continue_moving && checkpoints.contains(checktrail.last().unwrap()) {
                 println!("LOOP! {:?} obs: {} {}", checktrail.last().unwrap(),obsx,obsy);
                 return Some((obsx,obsy))
