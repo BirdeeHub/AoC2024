@@ -55,7 +55,7 @@ pub fn run() -> io::Result<Vec<(usize,usize)>> {
     
     println!("Time taken: {:?}", start.elapsed());
 
-    Ok(obstacles.len())
+    Ok(obstacles)
 }
 
 fn get_newspace(room: &[Vec<RoomSpace>], pos: (usize,usize), direction: &Direction) -> Option<(usize, usize)> {
