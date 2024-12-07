@@ -17,7 +17,7 @@ pub fn run() -> io::Result<()> {
     let file = File::open(inputvar)?;
     let reader = BufReader::new(file);
 
-    let mut room:Vec<Vec<RoomSpace>> = Vec::new();
+    let mut room = Room::new();
 
     for line in reader.lines() {
         let line = line?;
@@ -32,7 +32,7 @@ pub fn run() -> io::Result<()> {
         room.push(row);
     }
     // fix x and y...
-    let mut newroom = Vec::new();
+    let mut newroom = Room::new();
     for i in 0..room[0].len() {
         let mut newrow = Vec::new();
         room.iter().for_each(|row|newrow.push(row[i].clone()));
@@ -64,7 +64,7 @@ pub fn run() -> io::Result<()> {
     Ok(())
 }
 
-fn get_newspace(room: &[Vec<RoomSpace>], pos: (usize,usize), direction: &Direction) -> Option<(usize, usize)> {
+fn get_newspace(room: &Room, pos: (usize,usize), direction: &Direction) -> Option<(usize, usize)> {
     match direction {
         Direction::Up => {
             if pos.1 > 0 { Some((pos.0, pos.1 - 1)) } else { None }
@@ -81,7 +81,7 @@ fn get_newspace(room: &[Vec<RoomSpace>], pos: (usize,usize), direction: &Directi
     }
 }
 
-fn get_newspace_with_obstacle(room: &[Vec<RoomSpace>], pos: (usize,usize), direction: &Direction) -> Option<(Direction,(usize, usize))> {
+fn get_newspace_with_obstacle(room: &Room, pos: (usize,usize), direction: &Direction) -> Option<(Direction,(usize, usize))> {
     if let Some(newplace) = get_newspace(room, pos, direction) {
         if room[newplace.0][newplace.1] == RoomSpace::Obstacle {
             get_newspace_with_obstacle(room, pos, &turn_right(direction))
@@ -102,7 +102,7 @@ fn turn_right(direction: &Direction) -> Direction {
     }
 }
 
-fn check_for_loop(room: &mut [Vec<RoomSpace>], obsx: usize, obsy: usize) -> Option<(usize,usize)> {
+fn check_for_loop(room: &mut Room, obsx: usize, obsy: usize) -> Option<(usize,usize)> {
     if room[obsx][obsy] == RoomSpace::Obstacle {
         return None;
     }
@@ -112,7 +112,7 @@ fn check_for_loop(room: &mut [Vec<RoomSpace>], obsx: usize, obsy: usize) -> Opti
     let mut checktrail = Vec::new();
     while continue_moving {
         continue_moving = move_guard(room, &mut checktrail);
-        //print_room(room, 250);
+        print_room(room, 250);
         if continue_moving && checkpoints.contains(checktrail.last().unwrap()) {
             println!("LOOP! {:?} obs: {} {}", checktrail.last().unwrap(),obsx,obsy);
             return Some((obsx,obsy))
@@ -124,7 +124,7 @@ fn check_for_loop(room: &mut [Vec<RoomSpace>], obsx: usize, obsy: usize) -> Opti
     None
 }
 
-fn move_guard(room: &mut [Vec<RoomSpace>], trail: &mut Vec<(Direction,(usize,usize))>) -> bool {
+fn move_guard(room: &mut Room, trail: &mut Vec<(Direction,(usize,usize))>) -> bool {
     let mut guard_pos = (room.len(),room[0].len());
     let mut direction = Direction::Up;
     for (i, _) in room.iter().enumerate() {

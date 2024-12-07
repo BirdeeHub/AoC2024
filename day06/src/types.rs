@@ -1,4 +1,5 @@
 use std::fmt::{Display, Formatter};
+use std::ops::{Deref, DerefMut};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Direction {
@@ -33,22 +34,55 @@ impl Display for RoomSpace {
 }
 use std::time::Duration;
 use std::thread;
-pub fn print_room(room: &[Vec<RoomSpace>], delay:u64) {
+pub fn print_room(room: &Room, delay:u64) {
     thread::sleep(Duration::from_millis(delay));
-    println!("{}","-".repeat(room[0].len()));
-    if room.is_empty() {
-        return;
-    }
-
-    let num_cols = room.len();
-    let num_rows = room[0].len();
-
-    for col in 0..num_rows {
-        let row: String = (0..num_cols)
-            .map(|row| room[row][col].to_string())
-            .collect();
-        println!("{}", row);
-    }
-    println!("{}","-".repeat(room[0].len()));
+    println!("{}", room);
 }
 
+#[derive(Debug, PartialEq, Clone)]
+pub struct Room(Vec<Vec<RoomSpace>>);
+
+impl Room {
+    pub fn new() -> Room {
+        Room(Vec::new())
+    }
+}
+
+impl Deref for Room {
+    type Target = Vec<Vec<RoomSpace>>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for Room {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl Display for Room {
+    fn fmt(&self, fmt:&mut Formatter) -> Result<(), std::fmt::Error> {
+        if self.is_empty() {
+            return fmt.write_str("");
+        }
+        let mut resultstr = String::new();
+        resultstr.push_str(&"-".repeat(self[0].len()));
+        resultstr.push('\n');
+
+        let num_cols = self.len();
+        let num_rows = self[0].len();
+
+        for col in 0..num_rows {
+            let row: String = (0..num_cols)
+                .map(|row| self[row][col].to_string())
+                .collect();
+                resultstr.push_str(&row);
+                resultstr.push('\n');
+        }
+        resultstr.push_str(&"-".repeat(self[0].len()));
+        resultstr.push('\n');
+        fmt.write_str(&resultstr)
+    }
+}
