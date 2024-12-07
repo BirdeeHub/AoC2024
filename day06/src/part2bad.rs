@@ -11,7 +11,7 @@ fn deduplicate_vec<T: Eq + std::hash::Hash>(vec: Vec<T>) -> Vec<T> {
     set.into_iter().collect()
 }
 
-pub fn run() -> io::Result<Vec<(usize,usize)>> {
+pub fn run() -> io::Result<()> {
     let start = Instant::now();
     let inputvar = env::var("AOC_INPUT").expect("AOC_INPUT not set");
     let file = File::open(inputvar)?;
@@ -50,12 +50,11 @@ pub fn run() -> io::Result<Vec<(usize,usize)>> {
     }
     obstacles = deduplicate_vec(obstacles);
 
-    println!("locations: {:?}",obstacles);
     println!("number: {:?}",obstacles.len());
     
     println!("Time taken: {:?}", start.elapsed());
 
-    Ok(obstacles)
+    Ok(())
 }
 
 fn get_newspace(room: &[Vec<RoomSpace>], pos: (usize,usize), direction: &Direction) -> Option<(usize, usize)> {

@@ -5,6 +5,6 @@ mod part2;
 mod types;
 fn main() -> Result<()> {
     part1::run()?;
-    let expected = part2bad::run()?;
-    part2::run(expected)
+    //part2bad::run()?;
+    part2::run()
 }

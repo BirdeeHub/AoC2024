@@ -11,7 +11,7 @@ fn deduplicate_vec<T: Eq + std::hash::Hash>(vec: Vec<T>) -> Vec<T> {
     set.into_iter().collect()
 }
 
-pub fn run(expected:Vec<(usize,usize)>) -> io::Result<()> {
+pub fn run() -> io::Result<()> {
     let start = Instant::now();
     let inputvar = env::var("AOC_INPUT").expect("AOC_INPUT not set");
     let file = File::open(inputvar)?;
@@ -57,31 +57,7 @@ pub fn run(expected:Vec<(usize,usize)>) -> io::Result<()> {
     }
     obstacles = deduplicate_vec(obstacles);
 
-    println!("locations: {:?}",obstacles);
-    println!("number: {:?}",obstacles.len());
-    println!( "{}",
-        if obstacles.len() != expected.len() {
-            let extra: Vec<_> = obstacles.iter().filter(|v|!expected.contains(v)).collect();
-            let missing: Vec<_> = expected.iter().filter(|v|!obstacles.contains(v)).collect();
-            format!(
-                "FAIL, expected {}{}{}",
-                expected.len(),
-                if !extra.is_empty() {
-                    format!(", extra in obstacles: {:?}", extra)
-                } else {
-                    String::new()
-                },
-                if !missing.is_empty() {
-                    format!(", missing in obstacles: {:?}", missing)
-                } else {
-                    String::new()
-                },
-            )
-        } else {
-            "PASS".to_string()
-        }
-    );
-
+    println!("number of possible obstacle locations: {:?}",obstacles.len());
     
     println!("Time taken: {:?}", start.elapsed());
 
