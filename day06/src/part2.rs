@@ -84,10 +84,10 @@ fn get_newspace(room: &[Vec<RoomSpace>], pos: (usize,usize), direction: &Directi
             if pos.1 > 0 { Some((pos.0, pos.1 - 1)) } else { None }
         },
         Direction::Down => {
-            if pos.1 + 1 < room[pos.0].len() { Some((pos.0, pos.1 + 1)) } else { None }
+            if pos.1 < room[pos.0].len() -1 { Some((pos.0, pos.1 + 1)) } else { None }
         },
         Direction::Right => {
-            if pos.0 + 1 < room.len() { Some((pos.0 + 1, pos.1)) } else { None }
+            if pos.0 < room.len() - 1 { Some((pos.0 + 1, pos.1)) } else { None }
         },
         Direction::Left => {
             if pos.0 > 0 { Some((pos.0 - 1, pos.1)) } else { None }
