@@ -18,7 +18,7 @@ fn main() -> io::Result<()> {
         equations.push((ans.parse::<i64>().unwrap(), values));
     }
 
-    let operators = vec![
+    let mut operators = vec![
       Operator::new("+".to_string(), |a, b| { a + b }),
       Operator::new("*".to_string(), |a, b| { a * b })
     ];
@@ -33,11 +33,7 @@ fn main() -> io::Result<()> {
 
     println!("Part 1: {}", calibration_total);
 
-    let operators = vec![
-      Operator::new("+".to_string(), |a, b| { a + b }),
-      Operator::new("*".to_string(), |a, b| { a * b }),
-      Operator::new("||".to_string(), |a, b| { (a.to_string() + &b.to_string()).parse::<i64>().unwrap() })
-    ];
+    operators.push(Operator::new("||".to_string(), |a, b| { (a.to_string() + &b.to_string()).parse::<i64>().unwrap() }));
 
     let mut calibration_total = 0;
     for (answer, values) in equations {
