@@ -42,7 +42,7 @@ pub fn run() -> io::Result<Vec<(usize,usize)>> {
 
     let mut obstacles = Vec::new();
     for i in 0..room[0].len() {
-        for j in 0..room[0].len() {
+        for j in 0..room.len() {
             if let Some(obs) = check_for_loop(&mut room.clone(), i, j) {
                 obstacles.push(obs);
             }
