@@ -75,7 +75,6 @@ fn find_expression(target: i64, numbers: &[i64], operators: &[Operator]) -> Opti
 
             value = (operator.func)(value, next_number);
 
-            // Early exit if value exceeds the target
             if value > target {
                 valid = false;
                 break;
