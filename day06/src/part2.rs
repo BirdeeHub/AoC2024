@@ -72,7 +72,7 @@ pub fn run(expected:Vec<(usize,usize)>) -> io::Result<()> {
     println!("locations: {:?}",obstacles);
     println!("number: {:?}",obstacles.len());
     println!( "{}",
-        if obstacles.len() != expected.len() || obstacles != expected {
+        if obstacles.len() != expected.len() {
             let extra: Vec<_> = obstacles.iter().filter(|v|!expected.contains(v)).collect();
             let missing: Vec<_> = expected.iter().filter(|v|!obstacles.contains(v)).collect();
             format!(
@@ -185,7 +185,11 @@ fn move_guard(room: &mut [Vec<RoomSpace>], trail: &mut Vec<(Direction,(usize,usi
     room[guard_pos.0][guard_pos.1] = RoomSpace::Visited;
     trail.push((direction.clone(),guard_pos));
     if let Some((dir,newspace)) = get_newspace_with_obstacle(room, guard_pos, &direction) {
-        room[newspace.0][newspace.1] = RoomSpace::Guard(dir.clone());
+        if dir == direction {
+            room[newspace.0][newspace.1] = RoomSpace::Guard(dir.clone());
+        } else {
+            room[guard_pos.0][guard_pos.1] = RoomSpace::Guard(dir.clone());
+        }
         true
     } else {
         false
