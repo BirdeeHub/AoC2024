@@ -57,7 +57,7 @@ pub fn run() -> io::Result<()> {
     let mut obstacles = Vec::new();
     let tocheck = deduplicate_vec(trail.iter().map(|(_,pos)|pos).collect());
     for (i,(x,y)) in tocheck.iter().enumerate().skip(1) {
-        println!("{} / {}",i+1,trail.len());
+        println!("{} / {}",i,trail.len()-1);
         if let Some(obs) = check_for_loop(&mut room.clone(), *x,*y) {
             obstacles.push(obs);
         }
