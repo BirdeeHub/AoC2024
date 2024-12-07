@@ -1,5 +1,4 @@
 use std::fs::File;
-use std::collections::HashSet;
 use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
 use std::env;
@@ -7,8 +6,13 @@ use std::env;
 use crate::types::*;
 
 fn deduplicate_vec<T: Eq + std::hash::Hash>(vec: Vec<T>) -> Vec<T> {
-    let set: HashSet<_> = vec.into_iter().collect();
-    set.into_iter().collect()
+    let mut result = Vec::new();
+    for item in vec {
+        if !result.contains(&item) {
+            result.push(item);
+        }
+    }
+    result
 }
 
 pub fn run() -> io::Result<()> {
@@ -46,9 +50,12 @@ pub fn run() -> io::Result<()> {
     while continue_moving {
         continue_moving = move_guard(&mut board, &mut trail);
     }
+    
+    let visited = board.iter().flat_map(|row| row.iter()).filter(|&cell| cell == &RoomSpace::Visited).count();
 
     let mut obstacles = Vec::new();
-    for (i,(_, (x,y))) in trail.iter().enumerate() {
+    let tocheck = deduplicate_vec(trail.iter().map(|(_,pos)|pos).collect());
+    for (i,(x,y)) in tocheck.iter().enumerate() {
         println!("{} / {}",i+1,trail.len());
         if i == 0 { continue; }
         if let Some(obs) = check_for_loop(&mut room.clone(), *x,*y) {
@@ -57,7 +64,9 @@ pub fn run() -> io::Result<()> {
     }
     obstacles = deduplicate_vec(obstacles);
 
-    println!("number of possible obstacle locations: {:?}",obstacles.len());
+    println!("Part 1: total visited: {}", visited);
+
+    println!("Part 2: possible obstacle locations for loop: {:?}",obstacles.len());
     
     println!("Time taken: {:?}", start.elapsed());
 

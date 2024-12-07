@@ -1,5 +1,7 @@
 use std::fmt::{Display, Formatter};
 use std::ops::{Deref, DerefMut};
+use std::time::Duration;
+use std::thread;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Direction {
@@ -32,12 +34,6 @@ impl Display for RoomSpace {
         })
     }
 }
-use std::time::Duration;
-use std::thread;
-pub fn print_room(room: &Room, delay:u64) {
-    thread::sleep(Duration::from_millis(delay));
-    println!("{}", room);
-}
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Room(Vec<Vec<RoomSpace>>);
@@ -45,6 +41,10 @@ pub struct Room(Vec<Vec<RoomSpace>>);
 impl Room {
     pub fn new() -> Room {
         Room(Vec::new())
+    }
+    pub fn print(&self, delay:u64) {
+        thread::sleep(Duration::from_millis(delay));
+        println!("{}", self);
     }
 }
 
@@ -84,5 +84,27 @@ impl Display for Room {
         resultstr.push_str(&"-".repeat(self[0].len()));
         resultstr.push('\n');
         fmt.write_str(&resultstr)
+    }
+}
+
+pub struct Trail(Vec<(Direction,(usize,usize))>);
+
+impl Trail {
+    pub fn new() -> Trail {
+        Trail(Vec::new())
+    }
+}
+
+impl Deref for Trail {
+    type Target = Vec<(Direction,(usize,usize))>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for Trail {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
