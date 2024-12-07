@@ -62,7 +62,7 @@ pub fn run(expected:usize) -> io::Result<()> {
 
     let mut obstacles = Vec::new();
     for (i,(dir, (x,y))) in trail.iter().enumerate() {
-        //println!("{} / {}",i+1,trail.len());
+        println!("{} / {}",i+1,trail.len());
         if let Some(obs) = check_right_for_loop(&mut guardless_room.clone(), (*x,*y), dir) {
             obstacles.push(obs);
         }
@@ -130,7 +130,7 @@ fn check_right_for_loop(room: &mut [Vec<RoomSpace>], position: (usize,usize), di
             continue_moving = move_guard(room, &mut checktrail);
             //print_room(room, 150);
             if continue_moving && checkpoints.contains(checktrail.last().unwrap()) {
-                //println!("LOOP! {:?} obs: {} {}", checktrail.last().unwrap(),obsx,obsy);
+                println!("LOOP! {:?} obs: {} {}", checktrail.last().unwrap(),obsx,obsy);
                 return Some((obsx,obsy))
             }
             if continue_moving {
