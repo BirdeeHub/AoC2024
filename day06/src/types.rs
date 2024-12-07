@@ -33,8 +33,8 @@ impl Display for RoomSpace {
 }
 use std::time::Duration;
 use std::thread;
-pub fn print_room(room: &[Vec<RoomSpace>]) {
-    thread::sleep(Duration::from_millis(250));
+pub fn print_room(room: &[Vec<RoomSpace>], delay:u64) {
+    thread::sleep(Duration::from_millis(delay));
     println!("{}","-".repeat(room[0].len()));
     if room.is_empty() {
         return;

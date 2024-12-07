@@ -37,7 +37,7 @@ pub fn run() -> io::Result<()> {
     let mut continue_moving = true;
     while continue_moving {
         continue_moving = move_guard(&mut room);
-        //print_room(&room)
+        //print_room(&room, 250)
     }
     
     let visited = room.iter().flat_map(|row| row.iter()).filter(|&cell| cell == &RoomSpace::Visited).count();
