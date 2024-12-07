@@ -73,8 +73,8 @@ pub fn run(expected:Vec<(usize,usize)>) -> io::Result<()> {
     println!("number: {:?}",obstacles.len());
     println!( "{}",
         if obstacles.len() != expected.len() || obstacles != expected {
-            let extra: Vec<_> = obstacles.iter().skip(expected.len()).collect();
-            let missing: Vec<_> = expected.iter().skip(obstacles.len()).collect();
+            let extra: Vec<_> = obstacles.iter().filter(|v|!expected.contains(v)).collect();
+            let missing: Vec<_> = expected.iter().filter(|v|!obstacles.contains(v)).collect();
             format!(
                 "FAIL, expected {}{}{}",
                 expected.len(),
