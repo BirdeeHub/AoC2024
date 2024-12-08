@@ -31,7 +31,10 @@ fn main() -> io::Result<()> {
         }
     }
 
-    println!("Part 1: {}", calibration_total);
+    let p1 = calibration_total;
+    let p1time = start.elapsed();
+
+    let p2start = Instant::now();
 
     operators.push(Operator::new("||".to_string(), |a, b| { (a.to_string() + &b.to_string()).parse::<i64>().unwrap() }));
 
@@ -43,9 +46,11 @@ fn main() -> io::Result<()> {
         }
     }
 
+    println!("Part 1: {}", p1);
+    println!("P1 Time taken: {:?}", p1time);
     println!("Part 2: {}", calibration_total);
-
-    println!("Time taken: {:?}", start.elapsed());
+    println!("P2 Time taken: {:?}", p2start.elapsed());
+    println!("Total Time taken: {:?}", start.elapsed());
 
     Ok(())
 }
