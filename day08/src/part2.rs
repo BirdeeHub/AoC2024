@@ -104,14 +104,12 @@ fn populate_antis(mapgrid: &mut [Vec<MapSpace>]) {
             let newx = (a.0 as i32) - dx;
             let newy = (a.1 as i32) - dy;
             if newx >= 0 && newx < mapgrid.len() as i32 && newy >= 0 && newy < mapgrid[newx as usize].len() as i32{
-                println!("{:?}",mapgrid[newx as usize][newy as usize].tenna);
                 mapgrid[newx as usize][newy as usize].antis.push(freq);
             }
             let (dx, dy) = b.slope_from(&a);
             let newx = (b.0 as i32) - dx;
             let newy = (b.1 as i32) - dy;
             if newx >= 0 && newx < mapgrid.len() as i32 && newy >= 0 && newy < mapgrid[newx as usize].len() as i32{
-                println!("{:?}",mapgrid[newx as usize][newy as usize].tenna);
                 mapgrid[newx as usize][newy as usize].antis.push(freq);
             }
         }
