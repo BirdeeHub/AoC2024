@@ -100,17 +100,23 @@ fn populate_antis(mapgrid: &mut [Vec<MapSpace>]) {
     let pairmap = get_pairs(mapgrid);
     for (freq, pairs) in pairmap {
         for (a, b) in pairs {
+            mapgrid[a.0][a.1].antis.push(freq);
+            mapgrid[b.0][b.1].antis.push(freq);
             let (dx, dy) = a.slope_from(&b);
-            let newx = (a.0 as i32) - dx;
-            let newy = (a.1 as i32) - dy;
-            if newx >= 0 && newx < mapgrid.len() as i32 && newy >= 0 && newy < mapgrid[newx as usize].len() as i32{
+            let mut newx = (a.0 as i32) - dx;
+            let mut newy = (a.1 as i32) - dy;
+            while newx >= 0 && newx < mapgrid.len() as i32 && newy >= 0 && newy < mapgrid[newx as usize].len() as i32{
                 mapgrid[newx as usize][newy as usize].antis.push(freq);
+                newx -= dx;
+                newy -= dy;
             }
             let (dx, dy) = b.slope_from(&a);
-            let newx = (b.0 as i32) - dx;
-            let newy = (b.1 as i32) - dy;
-            if newx >= 0 && newx < mapgrid.len() as i32 && newy >= 0 && newy < mapgrid[newx as usize].len() as i32{
+            let mut newx = (b.0 as i32) - dx;
+            let mut newy = (b.1 as i32) - dy;
+            while newx >= 0 && newx < mapgrid.len() as i32 && newy >= 0 && newy < mapgrid[newx as usize].len() as i32{
                 mapgrid[newx as usize][newy as usize].antis.push(freq);
+                newx -= dx;
+                newy -= dy;
             }
         }
     }
