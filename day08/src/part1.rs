@@ -1,7 +1,9 @@
 use std::fs::File;
+use std::collections::HashMap;
 use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
 use std::env;
+use itertools::Itertools;
 
 #[derive(Debug, PartialEq)]
 struct MapSpace {
@@ -12,6 +14,14 @@ struct MapSpace {
 impl MapSpace {
     pub fn new() -> MapSpace {
         MapSpace { tenna: None, antis: Vec::new() }
+    }
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+struct Position (usize,usize);
+impl Position {
+    pub fn slope_from(&self, other: &Position) -> (i32, i32) {
+        (other.0 as i32 - self.0 as i32, other.1 as i32 - self.1 as i32)
     }
 }
 
@@ -40,11 +50,70 @@ pub fn run() -> io::Result<()> {
         mapgrid.push(row);
     }
 
-    for row in mapgrid.iter() {
-        println!("{:?}", row);
+    populate_antis(&mut mapgrid);
+
+    let mut anticount = 0;
+
+    for row in &mapgrid {
+        for space in row {
+            if ! space.antis.is_empty() {
+                anticount += 1;
+            }
+        }
     }
+
+    println!("Antinode count: {}", anticount);
 
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
+}
+
+fn get_pairs(mapgrid: &[Vec<MapSpace>]) -> HashMap<char, Vec<(Position, Position)>> {
+    let mut antennas:HashMap<char, Vec<Position>> = HashMap::new();
+
+    for (i, row) in mapgrid.iter().enumerate() {
+        for (j, space) in row.iter().enumerate() {
+            if let Some(freq) = space.tenna {
+                antennas.entry(freq).or_default().push(Position(i,j));
+            }
+        }
+    }
+
+    let mut pairs:HashMap<char, Vec<(Position, Position)>> = HashMap::new();
+    // Example continued from your code
+    for (&freq, positions) in &antennas {
+        if positions.len() < 2 {
+            continue;
+        }
+        let combinations = positions
+            .iter()
+            .tuple_combinations() // Generate all unique pairs
+            .map(|(a, b)| (*a, *b))
+            .collect::<Vec<_>>();
+        pairs.insert(freq, combinations);
+    }
+    pairs
+}
+
+fn populate_antis(mapgrid: &mut [Vec<MapSpace>]) {
+    let pairmap = get_pairs(mapgrid);
+    for (freq, pairs) in pairmap {
+        for (a, b) in pairs {
+            let (dx, dy) = a.slope_from(&b);
+            let newx = (a.0 as i32) - dx;
+            let newy = (a.1 as i32) - dy;
+            if newx >= 0 && newx < mapgrid.len() as i32 && newy >= 0 && newy < mapgrid[newx as usize].len() as i32{
+                println!("{:?}",mapgrid[newx as usize][newy as usize].tenna);
+                mapgrid[newx as usize][newy as usize].antis.push(freq);
+            }
+            let (dx, dy) = b.slope_from(&a);
+            let newx = (b.0 as i32) - dx;
+            let newy = (b.1 as i32) - dy;
+            if newx >= 0 && newx < mapgrid.len() as i32 && newy >= 0 && newy < mapgrid[newx as usize].len() as i32{
+                println!("{:?}",mapgrid[newx as usize][newy as usize].tenna);
+                mapgrid[newx as usize][newy as usize].antis.push(freq);
+            }
+        }
+    }
 }
