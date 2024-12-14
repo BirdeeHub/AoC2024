@@ -45,8 +45,8 @@ pub fn run() -> io::Result<()> {
             if let Some(num) = opt {
                 defragged.push(*num);
             } else {
-                while let Some(newopt) = disk.pop() {
-                    if let Some(endnum) = newopt {
+                while i < disk.len()-1 {
+                    if let Some(Some(endnum)) = disk.pop() {
                         defragged.push(endnum);
                         break;
                     }
