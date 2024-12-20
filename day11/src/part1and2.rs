@@ -35,17 +35,19 @@ pub fn run() -> io::Result<()> {
 }
 
 fn do_blink(stones: &[u64]) -> Vec<u64> {
-    stones.iter().flat_map(|&v| {
-        if v == 0 {
-            vec![1]
+    stones.iter().fold(Vec::new(), |mut acc,v|{
+        if *v == 0 {
+            acc.push(1);
         } else {
-            let numlen = ((v as f64).log10().floor() as u64 + 1) as usize;
+            let numlen = ((*v as f64).log10().floor() as u64 + 1) as usize;
             if numlen % 2 == 0 {
                 let divisor = 10u64.pow((numlen / 2) as u32);
-                vec![v / divisor, v % divisor]
+                acc.push(v / divisor);
+                acc.push(v % divisor);
             } else {
-                vec![v * 2024]
+                acc.push(*v*2024);
             }
         }
-    }).collect()
+        acc
+    })
 }
