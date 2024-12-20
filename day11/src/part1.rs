@@ -26,12 +26,6 @@ pub fn run() -> io::Result<()> {
     }
     println!("Part 1, 25 blinks: {}", stones.len());
 
-    for i in 0..50 {
-        println!("Blink {}", i + 26);
-        stones = do_blink(&stones);
-    }
-    println!("Part 2, 75 blinks:: {}", stones.len());
-
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())

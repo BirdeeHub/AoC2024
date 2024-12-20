@@ -1,5 +1,7 @@
 use std::io::Result;
-mod part1and2;
+mod part1;
+mod part2;
 fn main() -> Result<()> {
-    part1and2::run()
+    part1::run()?;
+    part2::run()
 }
