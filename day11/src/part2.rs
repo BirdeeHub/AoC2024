@@ -22,6 +22,7 @@ pub fn run() -> io::Result<()> {
         .collect();
 
     for i in 0..75 {
+        println!("blink {}", i+1);
         do_blink(&mut stones);
     }
     println!("Part 2, 75 blinks: {}", stones.len());
