@@ -16,11 +16,18 @@ pub fn run() -> io::Result<()> {
         Some(fp) => fp.to_string(),
         _ => env::var("AOC_INPUT").expect("AOC_INPUT not set")
     };
-    let input: Vec<u64> = read_file(&filepath)?.split_whitespace().map(|v| v.parse::<u64>().unwrap()).collect();
+    let mut stones: Vec<u64> = read_file(&filepath)?.split_whitespace().map(|v| v.parse::<u64>().unwrap()).collect();
 
-    println!("{:?}", input);
+    println!("{:?}", stones);
+
+    for i in 0..25 {
+        do_blink(&mut stones);
+    }
 
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
+}
+
+fn do_blink(stones: &mut [u64]) {
 }
