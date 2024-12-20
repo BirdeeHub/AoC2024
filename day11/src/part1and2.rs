@@ -42,7 +42,7 @@ fn do_blink(stones: &[u64]) -> Vec<u64> {
         if *v == 0 {
             acc.push(1);
         } else {
-            let numlen = ((*v as f64).log10().floor() as u64 + 1) as usize;
+            let numlen = (*v as f64).log10().floor() as u64 + 1;
             if numlen % 2 == 0 {
                 let divisor = 10u64.pow((numlen / 2) as u32);
                 acc.push(v / divisor);
