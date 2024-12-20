@@ -1,14 +1,18 @@
 use std::fs::File;
-use std::collections::HashSet;
 use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
 use std::env;
 
 use crate::types::*;
 
-fn deduplicate_vec<T: Eq + std::hash::Hash>(vec: Vec<T>) -> Vec<T> {
-    let set: HashSet<_> = vec.into_iter().collect();
-    set.into_iter().collect()
+fn deduplicate_vec<T: PartialEq>(vec: Vec<T>) -> Vec<T> {
+    let mut result = Vec::new();
+    for item in vec {
+        if !result.contains(&item) {
+            result.push(item);
+        }
+    }
+    result
 }
 
 pub fn run() -> io::Result<()> {
