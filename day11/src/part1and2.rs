@@ -1,7 +1,7 @@
-use std::fs::File;
-use std::time::Instant;
-use std::io::{self, Read};
 use std::env;
+use std::fs::File;
+use std::io::{self, Read};
+use std::time::Instant;
 
 fn read_file(file_path: &str) -> io::Result<String> {
     let mut contents = String::new();
@@ -14,9 +14,12 @@ pub fn run() -> io::Result<()> {
     let args: Vec<String> = std::env::args().collect();
     let filepath = match args.get(1) {
         Some(fp) => fp.to_string(),
-        _ => env::var("AOC_INPUT").expect("AOC_INPUT not set")
+        _ => env::var("AOC_INPUT").expect("AOC_INPUT not set"),
     };
-    let mut stones: Vec<u64> = read_file(&filepath)?.split_whitespace().map(|v| v.parse::<u64>().unwrap()).collect();
+    let mut stones: Vec<u64> = read_file(&filepath)?
+        .split_whitespace()
+        .map(|v| v.parse::<u64>().unwrap())
+        .collect();
 
     for _ in 0..25 {
         stones = do_blink(&stones);
@@ -24,7 +27,7 @@ pub fn run() -> io::Result<()> {
     println!("Part 1, 25 blinks: {}", stones.len());
 
     for i in 0..50 {
-        println!("Blink {}", i+26);
+        println!("Blink {}", i + 26);
         stones = do_blink(&stones);
     }
     println!("Part 2, 75 blinks:: {}", stones.len());
@@ -35,7 +38,7 @@ pub fn run() -> io::Result<()> {
 }
 
 fn do_blink(stones: &[u64]) -> Vec<u64> {
-    stones.iter().fold(Vec::new(), |mut acc,v|{
+    stones.iter().fold(Vec::new(), |mut acc, v| {
         if *v == 0 {
             acc.push(1);
         } else {
@@ -45,7 +48,7 @@ fn do_blink(stones: &[u64]) -> Vec<u64> {
                 acc.push(v / divisor);
                 acc.push(v % divisor);
             } else {
-                acc.push(*v*2024);
+                acc.push(*v * 2024);
             }
         }
         acc
