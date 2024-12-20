@@ -28,7 +28,7 @@ pub fn run() -> io::Result<()> {
     }
 
     for (th, count) in &mut trailheads {
-        *count = deduplicate_vec(calc_trails(&map, th, 0)).len();
+        *count = calc_trails(&map, th, 0).len();
     }
 
     let mut finalcount = 0;
