@@ -21,7 +21,8 @@ pub fn run() -> io::Result<()> {
         .map(|v| v.parse::<u64>().unwrap())
         .collect();
 
-    for _ in 0..75 {
+    for i in 0..75 {
+        println!("blink {}", i+1);
         do_blink(&mut stones);
     }
     println!("Part 2, 75 blinks: {}", stones.len());
