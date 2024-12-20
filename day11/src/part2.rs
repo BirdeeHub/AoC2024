@@ -21,31 +21,31 @@ pub fn run() -> io::Result<()> {
         .map(|v| v.parse::<u64>().unwrap())
         .collect();
 
-    for i in 0..75 {
-        println!("Blinks: {}", i+1);
-        stones = do_blink(&stones);
+    for _ in 0..25 {
+        do_blink(&mut stones);
     }
-    println!("Part 2, 75 blinks: {}", stones.len());
+    println!("Part 2, 25 blinks: {}", stones.len());
 
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
 }
 
-fn do_blink(stones: &[u64]) -> Vec<u64> {
-    stones.iter().fold(Vec::new(), |mut acc, v| {
-        if *v == 0 {
-            acc.push(1);
+fn do_blink(stones: &mut Vec<u64>) {
+    let fulllen = stones.len();
+    for i in 0..fulllen {
+        let v = stones[i];
+        if v == 0 {
+            stones[i] = 1;
         } else {
-            let numlen = (*v as f64).log10().floor() as u64 + 1;
+            let numlen = (v as f64).log10().floor() as u64 + 1;
             if numlen % 2 == 0 {
                 let divisor = 10u64.pow((numlen / 2) as u32);
-                acc.push(v / divisor);
-                acc.push(v % divisor);
+                stones[i] = v / divisor;
+                stones.push(v % divisor);
             } else {
-                acc.push(*v * 2024);
-            }
-        }
-        acc
-    })
+                stones[i] = v * 2024;
+            };
+        };
+    };
 }
