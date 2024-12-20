@@ -2,6 +2,7 @@ use std::fs::File;
 use std::time::Instant;
 use std::io::{self, Read};
 use std::env;
+use rayon::prelude::*;
 
 fn read_file(file_path: &str) -> io::Result<String> {
     let mut contents = String::new();
@@ -35,20 +36,21 @@ pub fn run() -> io::Result<()> {
 }
 
 fn do_blink(stones: &[u64]) -> Vec<u64> {
-    stones.iter().fold(Vec::new(), |mut acc,v|{
-        if *v == 0 {
-            acc.push(1);
+    stones.par_iter().flat_map(|&v|{
+        let mut res = Vec::new();
+        if v == 0 {
+            res.push(1);
         } else {
-            let numlen = ((*v as f64).log10().floor() as u64 + 1) as usize;
+            let numlen = ((v as f64).log10().floor() as u64 + 1) as usize;
             if numlen % 2 == 0 {
                 let charnum = v.to_string();
                 let (st1, st2) = charnum.split_at(numlen/2);
-                acc.push(st1.parse::<u64>().unwrap());
-                acc.push(st2.parse::<u64>().unwrap());
+                res.push(st1.parse::<u64>().unwrap());
+                res.push(st2.parse::<u64>().unwrap());
             } else {
-                acc.push(*v*2024);
+                res.push(v*2024);
             }
         }
-        acc
-    })
+        res
+    }).collect()
 }
