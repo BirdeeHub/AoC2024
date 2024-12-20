@@ -26,7 +26,7 @@ pub fn run() -> io::Result<()> {
 
     let res = stones.iter().map(|v| count(*v, 75, &mut memo)).sum::<u64>();
 
-    println!("Part 2, 25 blinks: {}", res);
+    println!("Part 2, 75 blinks: {}", res);
 
     println!("Time taken: {:?}", start.elapsed());
 
