@@ -31,8 +31,6 @@ pub fn run() -> io::Result<()> {
         *count = deduplicate_vec(calc_trails(&map, th, 0)).len();
     }
 
-    println!("Trailheads: {:?}", trailheads);
-
     let mut finalcount = 0;
     for (_, count) in &trailheads {
         finalcount += count;
@@ -71,7 +69,7 @@ impl Position {
 struct Map(Vec<Vec<usize>>);
 
 impl Map {
-    const TO_CHECK: [(i32,i32); 8] = [(0,1),(0,-1),(1,0),(-1,0),(-1,-1),(-1,1),(1,-1),(1,1)];
+    const TO_CHECK: [(i32,i32); 4] = [(0,1),(0,-1),(1,0),(-1,0)];
     fn new() -> Map {
         Map(Vec::new())
     }
