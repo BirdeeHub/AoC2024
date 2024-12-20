@@ -22,7 +22,6 @@ pub fn run() -> io::Result<()> {
         .collect();
 
     for i in 0..75 {
-        println!("blink {}", i+1);
         do_blink(&mut stones);
     }
     println!("Part 2, 75 blinks: {}", stones.len());
@@ -33,8 +32,8 @@ pub fn run() -> io::Result<()> {
 }
 
 fn do_blink(stones: &mut Vec<u64>) {
-    let fulllen = stones.len();
-    for i in 0..fulllen {
+    let stlen = stones.len();
+    for i in 0..stlen {
         let v = stones[i];
         if v == 0 {
             stones[i] = 1;
