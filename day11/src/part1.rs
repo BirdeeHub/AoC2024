@@ -22,7 +22,7 @@ pub fn run() -> io::Result<()> {
         .collect();
 
     for _ in 0..25 {
-        stones = do_blink(&stones);
+        do_blink(&mut stones);
     }
     println!("Part 1, 25 blinks: {}", stones.len());
 
@@ -31,20 +31,22 @@ pub fn run() -> io::Result<()> {
     Ok(())
 }
 
-fn do_blink(stones: &[u64]) -> Vec<u64> {
-    stones.iter().fold(Vec::new(), |mut acc, v| {
-        if *v == 0 {
-            acc.push(1);
+fn do_blink(stones: &mut Vec<u64>) {
+    let stlen = stones.len();
+    for i in 0..stlen {
+        let v = stones[i];
+        if v == 0 {
+            stones[i] = 1;
         } else {
-            let numlen = (*v as f64).log10().floor() as u64 + 1;
+            let numlen = (v as f64).log10().floor() as u64 + 1;
             if numlen % 2 == 0 {
                 let divisor = 10u64.pow((numlen / 2) as u32);
-                acc.push(v / divisor);
-                acc.push(v % divisor);
+                stones[i] = v / divisor;
+                stones.push(v % divisor);
             } else {
-                acc.push(*v * 2024);
-            }
-        }
-        acc
-    })
+                stones[i] = v * 2024;
+            };
+        };
+    };
 }
+
