@@ -18,16 +18,34 @@ pub fn run() -> io::Result<()> {
     };
     let mut stones: Vec<u64> = read_file(&filepath)?.split_whitespace().map(|v| v.parse::<u64>().unwrap()).collect();
 
-    println!("{:?}", stones);
-
-    for i in 0..25 {
-        do_blink(&mut stones);
+    for _ in 0..25 {
+        stones = do_blink(&stones);
     }
+
+    println!("Result: {}", stones.len());
 
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
 }
 
-fn do_blink(stones: &mut [u64]) {
+fn do_blink(stones: &[u64]) -> Vec<u64> {
+    stones.iter().fold(Vec::new(), |mut acc,v|{
+        if *v == 0 {
+            acc.push(1);
+            acc
+        } else if v.to_string().chars().collect::<Vec<char>>().len() % 2 == 0 {
+            let charnum:Vec<char> = v.to_string().chars().collect();
+            let numlen = charnum.len() / 2;
+            let (st1, st2) = charnum.split_at(numlen);
+            let new1 = st1.iter().collect::<String>().parse::<u64>().unwrap();
+            let new2 = st2.iter().collect::<String>().parse::<u64>().unwrap();
+            acc.push(new1);
+            acc.push(new2);
+            acc
+        } else {
+            acc.push(*v*2024);
+            acc
+        }
+    })
 }
