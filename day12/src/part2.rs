@@ -39,7 +39,7 @@ pub fn run() -> io::Result<()> {
     Ok(())
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Eq, Hash)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 struct Position(usize, usize, char);
 #[derive(Debug, PartialEq, Clone)]
 struct Plot {
