@@ -9,12 +9,6 @@ fn read_file(file_path: &str) -> io::Result<String> {
     Ok(contents)
 }
 
-#[derive(Debug, Clone)]
-enum Segment {
-    Block(Vec<Option<usize>>),
-    Empty(Vec<Option<usize>>),
-}
-
 pub fn run() -> io::Result<()> {
     let start = Instant::now();
     let args: Vec<String> = std::env::args().collect();
@@ -22,35 +16,67 @@ pub fn run() -> io::Result<()> {
         Some(fp) => fp.to_string(),
         _ => env::var("AOC_INPUT").expect("AOC_INPUT not set")
     };
-    let mut disk: Vec<Segment> = Vec::new();
-    let input: Vec<usize> = read_file(&filepath)?.trim().chars().map(|c| c.to_digit(10).unwrap() as usize).collect();
+
+    let mut disk: Vec<Option<u64>> = Vec::new();
+    let input: Vec<u64> = read_file(&filepath)?.trim().chars().map(|c| c.to_digit(10).unwrap() as u64).collect();
     let mut segment_num = 0;
     let mut i = 0;
     while i < input.len() {
         if let Some(num) = input.get(i) {
-            disk.push(Segment::Block(vec![Some(segment_num); *num]));
-            segment_num += 1;
+            if *num > 0 {
+                for _ in 0..*num {
+                    disk.push(Some(segment_num));
+                }
+                segment_num += 1;
+            }
             if let Some(spaces) = input.get(i+1) {
-                if *spaces > 0 {
-                    disk.push(Segment::Empty(vec![None; *spaces]));
+                for _ in 0..*spaces {
+                    disk.push(None);
                 }
             }
         }
         i += 2;
     }
-    while let Some(Segment::Empty(_)) = disk.last() {
-        disk.pop();
-    }
-    println!("{:?}",disk);
-    for i in (disk.len()-1)..=0 {
-        if let Some(Segment::Block(vals)) = disk.get_mut(i) {
-            continue;
-        };
-        for val in &mut disk {
-            if let Segment::Empty(vals2) = val {
+
+    let mut i = disk.len() - 1;
+
+    while i > 0 {
+        let val = disk[i];
+        if let Some(num) = val {
+            let mut len1 = 0;
+            while i-len1 > 0 && disk[i-len1].is_some_and(|v| v == num) {
+                len1 += 1;
             }
+            let mut len2 = 0;
+            let mut j = 0;
+            while j+len2 < i {
+                if len2 >= len1 {
+                    for k in 0..len1 {
+                        disk[j+k] = Some(num);
+                        disk[i-k] = None;
+                    }
+                    break;
+                } else if disk[j+len2].is_none() {
+                    len2 += 1;
+                } else {
+                    j += len2 + 1;
+                    len2 = 0;
+                }
+            }
+            i -= len1;
+        } else {
+            i -= 1;
         }
     }
+
+    let mut checksum: u64 = 0;
+    for (i, val) in disk.iter().enumerate() {
+        if let Some(num) = val {
+            checksum += *num * (i as u64);
+        }
+    }
+
+    println!("{:?}",checksum);
 
     println!("Time taken: {:?}", start.elapsed());
 
