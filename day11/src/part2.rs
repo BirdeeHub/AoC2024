@@ -37,20 +37,19 @@ fn count(stone: u64, steps: u64, memo: &mut HashMap<(u64,u64), u64>) -> u64 {
     if let Some(&res) = memo.get(&(stone, steps)) {
         return res;
     }
-    let ret;
-    if steps == 0 {
-        ret = 1;
+    let ret = if steps == 0 {
+        1
     } else if stone == 0 {
-        ret = count(1, steps - 1, memo);
+        count(1, steps - 1, memo)
     } else {
         let numlen = (stone as f64).log10().floor() as u64 + 1;
         if numlen % 2 == 0 {
             let divisor = 10u64.pow((numlen / 2) as u32);
-            ret = count(stone / divisor, steps - 1, memo) + count(stone % divisor, steps - 1, memo);
+            count(stone / divisor, steps - 1, memo) + count(stone % divisor, steps - 1, memo)
         } else {
-            ret = count(stone * 2024, steps - 1, memo);
-        };
-    }
+            count(stone * 2024, steps - 1, memo)
+        }
+    };
     memo.insert((stone, steps), ret);
     ret
 }
