@@ -1,4 +1,5 @@
 use std::fs::File;
+use std::ops::{Deref, DerefMut};
 use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
 use std::env;
@@ -24,4 +25,26 @@ pub fn run() -> io::Result<()> {
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+struct Position(usize, usize);
+#[derive(Debug, PartialEq, Clone)]
+struct Plot {
+    pos: Position,
+    edges: usize,
+}
+#[derive(Debug, PartialEq, Clone)]
+struct Region(Vec<Plot>);
+impl Deref for Region {
+    type Target = Vec<Plot>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl DerefMut for Region {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
 }
