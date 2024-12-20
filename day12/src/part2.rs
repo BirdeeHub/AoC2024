@@ -77,7 +77,23 @@ impl Region {
     fn calc_cost(&self) -> u64 {
         let area = self.len() as u64;
         // TODO: fix for part 2 so that its corners * area instead
-        let perimeter = self.iter().fold(0, |acc, plot| acc + (plot.edges as u64));
+        let mut acutes = Vec::new();
+        let perimeter = self.iter().fold(0, |acc, plot| acc + (match plot.edges as u64 {
+            4 => 4,
+            3 => 2,
+            2 => {
+                //TODO: find acute and oblique corners if any, if acute beware of duplicates
+            },
+            1 => {
+                // TODO:
+                // let outsidespace = find the space outside of the 1 edge of the plot;
+                // if acutes.contains(outsidespace) { return 0; }
+                // a 1 edge plot is acute if it has a neighbor with 0 edges and a neighbor with 1+ edges
+                // perpendicular to the line between current and outsidespace
+                // place the location of the external space past the 1 edge into the acutes list, return 1
+            },
+            0 => 0,
+        }));
         perimeter * area
     }
 }
