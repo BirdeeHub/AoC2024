@@ -30,15 +30,9 @@ pub fn run() -> io::Result<()> {
         }
     }
 
-    println!("Result: {:?}", res);
+    let ret = res.iter().map(|v|v.calc_cost()).sum::<u64>();
 
-    let ret = res.iter().map(|v|v.calc_cost()).collect::<Vec<u64>>();
-
-    println!("Result: {:?}", ret);
-
-    let final_sum = ret.iter().sum::<u64>();
-
-    println!("Final Sum: {}", final_sum);
+    println!("Part 1: {}", ret);
 
     println!("Time taken: {:?}", start.elapsed());
 
