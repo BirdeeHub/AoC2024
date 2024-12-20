@@ -1,4 +1,5 @@
 use std::fs::File;
+use std::collections::HashMap;
 use std::time::Instant;
 use std::io::{self, Read};
 use std::env;
@@ -21,8 +22,13 @@ pub fn run() -> io::Result<()> {
     for _ in 0..25 {
         stones = do_blink(&stones);
     }
+    println!("Part 1, 25 blinks: {}", stones.len());
 
-    println!("Result: {}", stones.len());
+    for i in 0..50 {
+        println!("Blink {}", i+26);
+        stones = do_blink(&stones);
+    }
+    println!("Part 2, 75 blinks:: {}", stones.len());
 
     println!("Time taken: {:?}", start.elapsed());
 
@@ -33,19 +39,17 @@ fn do_blink(stones: &[u64]) -> Vec<u64> {
     stones.iter().fold(Vec::new(), |mut acc,v|{
         if *v == 0 {
             acc.push(1);
-            acc
-        } else if v.to_string().chars().collect::<Vec<char>>().len() % 2 == 0 {
-            let charnum:Vec<char> = v.to_string().chars().collect();
-            let numlen = charnum.len() / 2;
-            let (st1, st2) = charnum.split_at(numlen);
-            let new1 = st1.iter().collect::<String>().parse::<u64>().unwrap();
-            let new2 = st2.iter().collect::<String>().parse::<u64>().unwrap();
-            acc.push(new1);
-            acc.push(new2);
-            acc
         } else {
-            acc.push(*v*2024);
-            acc
+            let numlen = ((*v as f64).log10().floor() as u64 + 1) as usize;
+            if numlen % 2 == 0 {
+                let charnum = v.to_string();
+                let (st1, st2) = charnum.split_at(numlen/2);
+                acc.push(st1.parse::<u64>().unwrap());
+                acc.push(st2.parse::<u64>().unwrap());
+            } else {
+                acc.push(*v*2024);
+            }
         }
+        acc
     })
 }
