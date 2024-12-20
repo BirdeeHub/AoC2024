@@ -13,14 +13,32 @@ pub fn run() -> io::Result<()> {
     })?;
     let reader = BufReader::new(file);
 
-    let mut garden:Vec<Vec<char>> = Vec::new();
+    let mut grid:Vec<Vec<char>> = Vec::new();
     for line in reader.lines() {
-        garden.push(line?.chars().collect());
+        grid.push(line?.chars().collect());
+    }
+    let mut res = Garden(Vec::new());
+    for (i, row) in grid.iter().enumerate() {
+        for (j, c) in row.iter().enumerate() {
+            let pos = Position(i, j, *c);
+            if !res.contains_position(&pos) {
+                let mut new_region = Region(Vec::new());
+                let mut visited = Vec::new();
+                new_region.populate(&grid, &pos, &mut visited);
+                res.push(new_region);
+            }
+        }
     }
 
-    for row in garden {
-        println!("{:?}", row);
-    }
+    println!("Result: {:?}", res);
+
+    let ret = res.iter().map(|v|v.calc_cost()).collect::<Vec<u64>>();
+
+    println!("Result: {:?}", ret);
+
+    let final_sum = ret.iter().sum::<u64>();
+
+    println!("Final Sum: {}", final_sum);
 
     println!("Time taken: {:?}", start.elapsed());
 
@@ -28,7 +46,7 @@ pub fn run() -> io::Result<()> {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-struct Position(usize, usize);
+struct Position(usize, usize, char);
 #[derive(Debug, PartialEq, Clone)]
 struct Plot {
     pos: Position,
@@ -36,6 +54,39 @@ struct Plot {
 }
 #[derive(Debug, PartialEq, Clone)]
 struct Region(Vec<Plot>);
+impl Region {
+    const NEIGHBOURS: [(isize, isize); 4] = [(1, 0), (0, 1), (-1, 0), (0, -1)];
+    fn populate(&mut self, field: &[Vec<char>], pos: &Position, visited: &mut Vec<Position>) {
+        if visited.contains(pos) {
+            return;
+        }
+        visited.push(*pos);
+        let mut plot = Plot {
+            pos: *pos,
+            edges: 0,
+        };
+        for (dx, dy) in Self::NEIGHBOURS {
+            let newrow = pos.0 as isize + dx;
+            let newcol = pos.1 as isize + dy;
+            if newrow < 0 || newcol < 0 || newrow >= field.len() as isize || newcol >= field[newrow as usize].len() as isize {
+                plot.edges += 1;
+            } else if let Some(neighbor_char) = field.get(newrow as usize).and_then(|row| row.get(newcol as usize)) {
+                if *neighbor_char != pos.2 {
+                    plot.edges += 1;
+                } else {
+                    self.populate(field, &Position(newrow as usize, newcol as usize, *neighbor_char), visited);
+                }
+            }
+        }
+        self.push(plot);
+    }
+    fn calc_cost(&self) -> u64 {
+        // perimeter * area
+        self.iter().fold(0, |acc, plot| acc + (plot.edges as u64)) * (self.len() as u64)
+    }
+}
+
+
 impl Deref for Region {
     type Target = Vec<Plot>;
 
@@ -44,6 +95,27 @@ impl Deref for Region {
     }
 }
 impl DerefMut for Region {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+#[derive(Debug, PartialEq, Clone)]
+struct Garden(Vec<Region>);
+impl Garden {
+    fn contains_position(&self, pos: &Position) -> bool {
+        self.iter().any(|region| {
+            region.iter().any(|plot| plot.pos == *pos)
+        })
+    }
+}
+impl Deref for Garden {
+    type Target = Vec<Region>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl DerefMut for Garden {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }
