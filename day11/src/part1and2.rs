@@ -1,5 +1,4 @@
 use std::fs::File;
-use std::collections::HashMap;
 use std::time::Instant;
 use std::io::{self, Read};
 use std::env;
