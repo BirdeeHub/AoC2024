@@ -76,8 +76,7 @@ impl Region {
     }
     fn calc_cost(&self) -> u64 {
         let area = self.len() as u64;
-        // TODO: fix for part 2 so that its sides * area instead
-        // where sides are contiguous edges that are on the same line
+        // TODO: fix for part 2 so that its corners * area instead
         let perimeter = self.iter().fold(0, |acc, plot| acc + (plot.edges as u64));
         perimeter * area
     }
