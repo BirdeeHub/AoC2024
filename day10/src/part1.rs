@@ -1,5 +1,4 @@
 use std::fs::File;
-use std::collections::HashSet;
 use std::ops::{Deref, DerefMut};
 use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
@@ -29,9 +28,7 @@ pub fn run() -> io::Result<()> {
     }
 
     for (th, count) in &mut trailheads {
-        let mut visited = HashSet::new();
-        visited.insert(th.clone());
-        *count = calc_trails(&map, th, 0, &mut visited).len();
+        *count = deduplicate_vec(calc_trails(&map, th, 0)).len();
     }
 
     println!("Trailheads: {:?}", trailheads);
@@ -46,6 +43,16 @@ pub fn run() -> io::Result<()> {
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
+}
+
+fn deduplicate_vec<T: Eq + std::hash::Hash>(vec: Vec<T>) -> Vec<T> {
+    let mut result = Vec::new();
+    for item in vec {
+        if !result.contains(&item) {
+            result.push(item);
+        }
+    }
+    result
 }
 
 #[derive(Debug,Clone,PartialEq,Eq,Hash)]
@@ -98,24 +105,14 @@ impl DerefMut for Map {
     }
 }
 
-fn calc_trails(map: &Map, th: &Position, level: usize, visited: &mut HashSet<Position>) -> HashSet<Position> {
-    if level > 8 {
-        let mut res = HashSet::new();
-        res.insert(th.clone());
-        return res;
-    }
-
-    let mut retval = HashSet::new();
-    let nextset = map.neighbors_with_val(th, level + 1);
-
+fn calc_trails(map: &Map, th: &Position, level: usize) -> Vec<Position> {
+    if level > 8 { return vec![th.clone()]; };
+    let mut retval = Vec::new();
+    let nextset = map.neighbors_with_val(th,level+1);
     for val in nextset {
-        if !visited.contains(&val) {
-            visited.insert(val.clone());
-            let next_trails = calc_trails(map, &val, level + 1, visited);
-            retval.extend(next_trails);
-            visited.remove(&val); // Backtrack to allow other paths
+        for item in calc_trails(map,&val,level+1) {
+            retval.push(item);
         }
     }
-
     retval
 }
