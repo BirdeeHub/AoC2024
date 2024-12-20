@@ -43,16 +43,6 @@ pub fn run() -> io::Result<()> {
     Ok(())
 }
 
-fn deduplicate_vec<T: PartialEq>(vec: Vec<T>) -> Vec<T> {
-    let mut result = Vec::new();
-    for item in vec {
-        if !result.contains(&item) {
-            result.push(item);
-        }
-    }
-    result
-}
-
 #[derive(Debug,Clone,PartialEq)]
 struct Position {
     row: usize,
