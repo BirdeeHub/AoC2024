@@ -32,7 +32,7 @@ pub fn run() -> io::Result<()> {
 
     let ret = res.iter().map(|v|v.calc_cost()).sum::<u64>();
 
-    println!("Part 1: {}", ret);
+    println!("Part 2: {}", ret);
 
     println!("Time taken: {:?}", start.elapsed());
 
@@ -77,6 +77,7 @@ impl Region {
     fn calc_cost(&self) -> u64 {
         // perimeter * area
         self.iter().fold(0, |acc, plot| acc + (plot.edges as u64)) * (self.len() as u64)
+        // TODO: fix for part 2 so that its contiguous sides * area instead
     }
 }
 
