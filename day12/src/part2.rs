@@ -30,7 +30,7 @@ pub fn run() -> io::Result<()> {
         }
     }
 
-    let ret = res.iter().map(|v|v.calc_cost()).sum::<u64>();
+    let ret = res.get_cost();
 
     println!("Part 2: {}", ret);
 
@@ -101,6 +101,9 @@ impl Garden {
         self.iter().any(|region| {
             region.iter().any(|plot| plot.pos == *pos)
         })
+    }
+    fn get_cost(&self) -> u64 {
+        self.iter().map(|v|v.calc_cost()).sum::<u64>()
     }
 }
 impl Deref for Garden {
