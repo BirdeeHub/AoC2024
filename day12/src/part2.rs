@@ -82,18 +82,17 @@ impl Region {
             4 => 4,
             3 => 2,
             2 => {
-                //TODO: find acute and oblique corners if any, if acute beware of duplicates
                 let outers = self.go_past_edges(&plot.pos);
                 for (x, y) in outers { //<- will not iterate more times than there are edges, and they are the possible locations of an acute
                     if acutes.contains(&(x, y)) || x >= size.0 || y >= size.1 {
                         continue;
                     };
-                    //TODO: check if acute angle
+                    // TODO: check if acute angle
                     // a 1 edge plot is acute if it has a neighbor with 0 edges and a neighbor with 1+ edges
                     // perpendicular to the line between current and outsidespace
                     // place the location of the external space past the 1 edge into the acutes list, return 1
                 }
-                // TODO: check oblique corners 
+                // TODO: check oblique corners
             },
             1 => {
                 let outers = self.go_past_edges(&plot.pos);
@@ -101,7 +100,7 @@ impl Region {
                     if acutes.contains(&(x, y)) || x >= size.0 || y >= size.1 {
                         continue;
                     };
-                    //TODO: check if acute angle
+                    // TODO: check if acute angle
                     // a 1 edge plot is acute if it has a neighbor with 0 edges and a neighbor with 1+ edges
                     // perpendicular to the line between current and outsidespace
                     // place the location of the external space past the 1 edge into the acutes list, return 1
