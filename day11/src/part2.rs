@@ -17,19 +17,16 @@ pub fn run() -> io::Result<()> {
         Some(fp) => fp.to_string(),
         _ => env::var("AOC_INPUT").expect("AOC_INPUT not set"),
     };
+
     let stones: Vec<u64> = read_file(&filepath)?
         .split_whitespace()
         .map(|v| v.parse::<u64>().unwrap())
         .collect();
-
     let mut memo: HashMap<(u64,u64), u64> = HashMap::new();
-
     let res = stones.iter().map(|v| count(*v, 75, &mut memo)).sum::<u64>();
-
     println!("Part 2, 75 blinks: {}", res);
 
     println!("Time taken: {:?}", start.elapsed());
-
     Ok(())
 }
 

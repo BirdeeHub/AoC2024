@@ -74,7 +74,7 @@ impl Region {
         }
         self.push(plot);
     }
-    fn calc_cost(&self) -> u64 {
+    fn calc_cost(&self, size: (usize,usize)) -> u64 {
         let area = self.len() as u64;
         // TODO: fix for part 2 so that its corners * area instead
         let mut acutes = Vec::new();
@@ -82,17 +82,30 @@ impl Region {
             4 => 4,
             3 => 2,
             2 => {
-                let outers = self.go_past_edges(&plot.pos);
                 //TODO: find acute and oblique corners if any, if acute beware of duplicates
+                let outers = self.go_past_edges(&plot.pos);
+                for (x, y) in outers { //<- will not iterate more times than there are edges, and they are the possible locations of an acute
+                    if acutes.contains(&(x, y)) || x >= size.0 || y >= size.1 {
+                        continue;
+                    };
+                    //TODO: check if acute angle
+                    // a 1 edge plot is acute if it has a neighbor with 0 edges and a neighbor with 1+ edges
+                    // perpendicular to the line between current and outsidespace
+                    // place the location of the external space past the 1 edge into the acutes list, return 1
+                }
+                // TODO: check oblique corners 
             },
             1 => {
                 let outers = self.go_past_edges(&plot.pos);
-                // TODO:
-                // let outsidespace = find the space outside of the 1 edge of the plot;
-                // if acutes.contains(outsidespace) { return 0; }
-                // a 1 edge plot is acute if it has a neighbor with 0 edges and a neighbor with 1+ edges
-                // perpendicular to the line between current and outsidespace
-                // place the location of the external space past the 1 edge into the acutes list, return 1
+                for (x, y) in outers { //<- will not iterate more times than there are edges, and they are the possible locations of an acute
+                    if acutes.contains(&(x, y)) || x >= size.0 || y >= size.1 {
+                        continue;
+                    };
+                    //TODO: check if acute angle
+                    // a 1 edge plot is acute if it has a neighbor with 0 edges and a neighbor with 1+ edges
+                    // perpendicular to the line between current and outsidespace
+                    // place the location of the external space past the 1 edge into the acutes list, return 1
+                }
             },
             0 => 0,
         }));
@@ -109,6 +122,7 @@ impl Region {
                 for plot in self.iter() {
                     if plot.pos.0 == newrow as usize && plot.pos.1 == newcol as usize {
                         found = true;
+                        break;
                     }
                 }
                 if ! found {
@@ -141,7 +155,7 @@ impl Garden {
         })
     }
     fn get_cost(&self) -> u64 {
-        self.iter().map(|v|v.calc_cost()).sum::<u64>()
+        self.iter().map(|v|v.calc_cost((self.len(),self[0].len()))).sum::<u64>()
     }
 }
 impl Deref for Garden {
