@@ -82,9 +82,11 @@ impl Region {
             4 => 4,
             3 => 2,
             2 => {
+                let outers = self.go_past_edges(&plot.pos);
                 //TODO: find acute and oblique corners if any, if acute beware of duplicates
             },
             1 => {
+                let outers = self.go_past_edges(&plot.pos);
                 // TODO:
                 // let outsidespace = find the space outside of the 1 edge of the plot;
                 // if acutes.contains(outsidespace) { return 0; }
@@ -96,8 +98,27 @@ impl Region {
         }));
         perimeter * area
     }
-}
 
+    fn go_past_edges(&self, pos: &Position) -> Vec<(usize, usize)> {
+        let mut outers = Vec::new();
+        for (dx, dy) in Self::NEIGHBOURS {
+            let newrow = pos.0 as isize + dx;
+            let newcol = pos.1 as isize + dy;
+            if newrow < 0 || newcol < 0 {
+                let mut found = false;
+                for plot in self.iter() {
+                    if plot.pos.0 == newrow as usize && plot.pos.1 == newcol as usize {
+                        found = true;
+                    }
+                }
+                if ! found {
+                    outers.push((newrow as usize, newcol as usize));
+                }
+            }
+        }
+        outers
+    }
+}
 
 impl Deref for Region {
     type Target = Vec<Plot>;
