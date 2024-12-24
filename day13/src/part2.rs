@@ -33,11 +33,11 @@ pub fn run() -> io::Result<()> {
         if ! line.is_empty() {
             if button_match.is_match(&line) {
                 for (_, [dx,dy]) in button_match.captures_iter(&line).map(|c| c.extract()) {
-                    results.push((dx.parse::<f64>().unwrap(), dy.parse::<f64>().unwrap()));
+                    results.push((dx.parse().unwrap(), dy.parse().unwrap()));
                 }
             } else if prize_match.is_match(&line) {
                 for (_, [x,y]) in prize_match.captures_iter(&line).map(|c| c.extract()) {
-                    results.push((x.parse::<f64>().unwrap(), y.parse::<f64>().unwrap()));
+                    results.push((x.parse().unwrap(), y.parse().unwrap()));
                 }
             }
         }
