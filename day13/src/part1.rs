@@ -7,11 +7,11 @@ use regex::Regex;
 
 #[derive(Debug, Copy, Clone)]
 struct Point {
-    x: usize,
-    y: usize
+    x: i32,
+    y: i32
 }
 impl Point {
-    fn new(x: usize, y: usize) -> Point {
+    fn new(x: i32, y: i32) -> Point {
         Point{x, y}
     }
 }
@@ -34,11 +34,11 @@ pub fn run() -> io::Result<()> {
         if ! line.is_empty() {
             if button_match.is_match(&line) {
                 for (_, [id,dx,dy]) in button_match.captures_iter(&line).map(|c| c.extract()) {
-                    results.push((id.to_string(), dx.parse::<usize>().unwrap(), dy.parse::<usize>().unwrap()));
+                    results.push((id.to_string(), dx.parse::<i32>().unwrap(), dy.parse::<i32>().unwrap()));
                 }
             } else if prize_match.is_match(&line) {
                 for (_, [x,y]) in prize_match.captures_iter(&line).map(|c| c.extract()) {
-                    results.push(("P".to_string(), x.parse::<usize>().unwrap(), y.parse::<usize>().unwrap()));
+                    results.push(("P".to_string(), x.parse::<i32>().unwrap(), y.parse::<i32>().unwrap()));
                 }
             }
         }
@@ -52,14 +52,14 @@ pub fn run() -> io::Result<()> {
         res
     }).collect();
 
-    /*
-        canReach = (m[P].y * m[A].x - m[P].x * m[A].y) % (m[P].y * m[B].x - m[P].x * m[B].y) != 0
-        Btimes = (m[P].y * m[A].x - m[P].x * m[A].y) / (m[P].y * m[B].x - m[P].x * m[B].y)
-        Atimes = (m[B].x - m[P].x * Btimes) / m[A].x
-    */
-
     for m in machines {
-        println!("{:?}", m);
+        // TODO: Your algebra sucked and you didnt even read the whole problem...
+        // A costs 3 and B costs 1
+        // you didnt even solve for the right thing nor did you do it right...
+        let canReach = (m["P"].y * m["A"].x - m["P"].x * m["A"].y) % (m["P"].y * m["B"].x - m["P"].x * m["B"].y) == 0;
+        let Btimes = (m["P"].y * m["A"].x - m["P"].x * m["A"].y) / (m["P"].y * m["B"].x - m["P"].x * m["B"].y);
+        let Atimes = (m["B"].x - m["P"].x * Btimes) / m["A"].x;
+        println!("{} {} {}", Atimes, Btimes, canReach);
     }
 
     println!("Time taken: {:?}", start.elapsed());
