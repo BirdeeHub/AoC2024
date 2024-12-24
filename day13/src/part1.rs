@@ -5,13 +5,13 @@ use std::env;
 use regex::Regex;
 
 #[derive(Debug, Copy, Clone)]
-struct Point {
+struct Vec2 {
     x: i32,
     y: i32
 }
-impl Point {
-    fn new(x: i32, y: i32) -> Point {
-        Point{x, y}
+impl Vec2 {
+    fn new(x: i32, y: i32) -> Vec2 {
+        Vec2{x, y}
     }
 }
 
@@ -43,10 +43,10 @@ pub fn run() -> io::Result<()> {
         }
     }
 
-    let machines:Vec<[Point;3]> = results.chunks(3).map(|chunk| {
+    let machines:Vec<[Vec2;3]> = results.chunks(3).map(|chunk| {
         let mut res = Vec::new();
         for (x,y) in chunk {
-            res.push(Point::new(*x, *y));
+            res.push(Vec2::new(*x, *y));
         }
         match (&res[0..=2]).try_into() {
             Ok(arr) => arr,
@@ -68,7 +68,7 @@ pub fn run() -> io::Result<()> {
 }
 
 // returns token count or none
-fn solve(a: Point, b: Point, p: Point) -> Option<(usize)> {
+fn solve(a: Vec2, b: Vec2, p: Vec2) -> Option<(usize)> {
 }
 // TODO: find min value of pt to return
 // 3 * at + bt = pt
