@@ -71,7 +71,7 @@ fn solve(a: Vec2, b: Vec2, p: Vec2) -> Option<usize> {
     let at = (p.x * b.y - p.y * b.x) / (a.x * b.y - a.y * b.x);
     let bt = (p.x - a.x * at) / b.x;
     let tokens = 3. * at + bt;
-    if bt > 100. || at > 100. || bt.fract() != 0. || at.fract() != 0. {
+    if bt.fract() != 0. || at.fract() != 0. {
         None
     } else {
         Some(tokens as usize)
