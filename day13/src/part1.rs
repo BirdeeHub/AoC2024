@@ -68,9 +68,9 @@ pub fn run() -> io::Result<()> {
 
 // returns token count or none
 fn solve(a: Vec2, b: Vec2, p: Vec2) -> Option<usize> {
-    let bt = (p.x * b.y - p.y * b.x) / (a.x * b.y - a.y * b.x);
-    let at = (p.x - a.x * bt) / b.x;
-    let tokens = 3. * bt + at;
+    let at = (p.x * b.y - p.y * b.x) / (a.x * b.y - a.y * b.x);
+    let bt = (p.x - a.x * at) / b.x;
+    let tokens = 3. * at + bt;
     if bt > 100. || at > 100. || bt.fract() != 0. || at.fract() != 0. {
         None
     } else {
