@@ -46,7 +46,7 @@ pub fn run() -> io::Result<()> {
     let machines:Vec<[Vec2;3]> = results.chunks(3).map(|chunk| {
         let mut res = Vec::new();
         for (x,y) in chunk {
-            res.push(Vec2::new(*x*10000000000000., *y*10000000000000.));
+            res.push(Vec2::new(*x, *y));
         }
         match (&res[0..=2]).try_into() {
             Ok(arr) => arr,
@@ -56,7 +56,8 @@ pub fn run() -> io::Result<()> {
 
     let mut total = 0;
     for [a, b, p] in &machines {
-        total += solve(*a,*b,*p).unwrap_or(0);
+        let newp = Vec2::new(p.x+10000000000000., p.y+10000000000000.);
+        total += solve(*a,*b,newp).unwrap_or(0);
     }
 
     println!("Part 1: {:?}", total);
