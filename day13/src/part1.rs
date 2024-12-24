@@ -69,11 +69,8 @@ pub fn run() -> io::Result<()> {
 
 // returns token count or none
 fn solve(a: Point, b: Point, p: Point) -> Option<(usize)> {
-    // TODO: Your algebra sucked and you didnt even read the whole problem...
-    // A costs 3 and B costs 1
-    // you didnt even solve for the right thing nor did you do it right...
-    let canReach = (p.y * a.x - p.x * a.y) % (p.y * b.x - p.x * b.y) == 0;
-    let Btimes = (p.y * a.x - p.x * a.y) / (p.y * b.x - p.x * b.y);
-    let Atimes = (b.x - p.x * Btimes) / a.x;
-    println!("{} {} {}", Atimes, Btimes, canReach);
 }
+// TODO: find min value of pt to return
+// 3 * at + bt = pt
+// a.x * at + b.x * bt = p.x
+// a.y * at + b.y * bt = p.y
