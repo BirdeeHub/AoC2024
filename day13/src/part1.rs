@@ -24,7 +24,7 @@ pub fn run() -> io::Result<()> {
     })?;
     let reader = BufReader::new(file);
 
-    let button_match = Regex::new(r"^Button A|B: X\+(\d+), Y\+(\d+)$").unwrap();
+    let button_match = Regex::new(r"^Button [AB]: X\+(\d+), Y\+(\d+)$").unwrap();
     let prize_match = Regex::new(r"^Prize: X=(\d+), Y=(\d+)$").unwrap();
 
     let mut results = Vec::new();
@@ -48,18 +48,19 @@ pub fn run() -> io::Result<()> {
         for (x,y) in chunk {
             res.push(Point::new(*x, *y));
         }
-        match (&res[0..2]).try_into() {
+        match (&res[0..=2]).try_into() {
             Ok(arr) => arr,
             Err(_) => panic!("AOC input invalid, not all machines have 2 buttons and a prize")
         }
     }).collect();
 
     let mut total = 0;
-    for [a, b, p] in machines {
-        total += solve(a,b,p).unwrap_or(0);
+    for [a, b, p] in &machines {
+        println!("A: {:?}, B: {:?}, P: {:?}", a, b, p);
+        total += solve(*a,*b,*p).unwrap_or(0);
     }
 
-    println!("Part 1: {}", total);
+    println!("Part 1: {:?}", total);
 
     println!("Time taken: {:?}", start.elapsed());
 
