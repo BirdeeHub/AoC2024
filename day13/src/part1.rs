@@ -70,10 +70,11 @@ pub fn run() -> io::Result<()> {
 fn solve(a: Vec2, b: Vec2, p: Vec2) -> Option<usize> {
     let bt = (p.x * b.y - p.y * b.x) / (a.x * b.y - a.y * b.x);
     let at = (p.x - a.x * bt) / b.x;
+    let tokens = 3. * at + bt;
     if bt > 100. || at > 100. || bt.fract() != 0. || at.fract() != 0. {
         None
     } else {
-        Some((3. * at + bt) as usize)
+        Some(tokens as usize)
     }
 }
 //find min value of pt to return
