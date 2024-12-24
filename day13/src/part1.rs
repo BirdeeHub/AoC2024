@@ -56,7 +56,6 @@ pub fn run() -> io::Result<()> {
 
     let mut total = 0;
     for [a, b, p] in &machines {
-        println!("A: {:?}, B: {:?}, P: {:?}", a, b, p);
         total += solve(*a,*b,*p).unwrap_or(0);
     }
 
