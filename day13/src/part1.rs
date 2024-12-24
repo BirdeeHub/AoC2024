@@ -6,11 +6,11 @@ use regex::Regex;
 
 #[derive(Debug, Copy, Clone)]
 struct Vec2 {
-    x: i32,
-    y: i32
+    x: f32,
+    y: f32
 }
 impl Vec2 {
-    fn new(x: i32, y: i32) -> Vec2 {
+    fn new(x: f32, y: f32) -> Vec2 {
         Vec2{x, y}
     }
 }
@@ -33,11 +33,11 @@ pub fn run() -> io::Result<()> {
         if ! line.is_empty() {
             if button_match.is_match(&line) {
                 for (_, [dx,dy]) in button_match.captures_iter(&line).map(|c| c.extract()) {
-                    results.push((dx.parse::<i32>().unwrap(), dy.parse::<i32>().unwrap()));
+                    results.push((dx.parse().unwrap(), dy.parse().unwrap()));
                 }
             } else if prize_match.is_match(&line) {
                 for (_, [x,y]) in prize_match.captures_iter(&line).map(|c| c.extract()) {
-                    results.push((x.parse::<i32>().unwrap(), y.parse::<i32>().unwrap()));
+                    results.push((x.parse().unwrap(), y.parse().unwrap()));
                 }
             }
         }
@@ -68,7 +68,8 @@ pub fn run() -> io::Result<()> {
 }
 
 // returns token count or none
-fn solve(a: Vec2, b: Vec2, p: Vec2) -> Option<(usize)> {
+fn solve(a: Vec2, b: Vec2, p: Vec2) -> Option<usize> {
+    Some(0)
 }
 // TODO: find min value of pt to return
 // 3 * at + bt = pt
