@@ -1,8 +1,20 @@
 use std::fs::File;
+use std::collections::HashMap;
 use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
 use std::env;
 use regex::Regex;
+
+#[derive(Debug, Copy, Clone)]
+struct Point {
+    x: usize,
+    y: usize
+}
+impl Point {
+    fn new(x: usize, y: usize) -> Point {
+        Point{x, y}
+    }
+}
 
 pub fn run() -> io::Result<()> {
     let start = Instant::now();
@@ -32,10 +44,22 @@ pub fn run() -> io::Result<()> {
         }
     }
 
-    let machines:Vec<Vec<(String, usize, usize)>> = results.chunks(3).map(|chunk| chunk.to_vec()).collect();
+    let machines:Vec<HashMap<String,Point>> = results.chunks(3).map(|chunk| {
+        let mut res = HashMap::new();
+        for (id,x,y) in chunk {
+            res.insert(id.clone(), Point::new(*x, *y));
+        }
+        res
+    }).collect();
 
-    for machine in machines {
-        println!("{:?}", machine);
+    /*
+        canReach = (m[P].y * m[A].x - m[P].x * m[A].y) % (m[P].y * m[B].x - m[P].x * m[B].y) != 0
+        Btimes = (m[P].y * m[A].x - m[P].x * m[A].y) / (m[P].y * m[B].x - m[P].x * m[B].y)
+        Atimes = (m[B].x - m[P].x * Btimes) / m[A].x
+    */
+
+    for m in machines {
+        println!("{:?}", m);
     }
 
     println!("Time taken: {:?}", start.elapsed());
