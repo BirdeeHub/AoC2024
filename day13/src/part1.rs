@@ -77,7 +77,7 @@ fn solve(a: Vec2, b: Vec2, p: Vec2) -> Option<usize> {
         Some((3. * at + bt) as usize)
     }
 }
-// TODO: find min value of pt to return
+//find min value of pt to return
 // 3 * at + bt = pt
 // a.x * at + b.x * bt = p.x
 // a.y * at + b.y * bt = p.y
