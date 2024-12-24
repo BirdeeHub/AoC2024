@@ -71,7 +71,7 @@ pub fn run() -> io::Result<()> {
 fn solve(a: Vec2, b: Vec2, p: Vec2) -> Option<usize> {
     let bt = (p.x * b.y - p.y * b.x) / (a.x * b.y - a.y * b.x);
     let at = (p.x - a.x * bt) / b.x;
-    if bt.fract() != 0.0 {
+    if bt > 100. || at > 100. || bt.fract() != 0. || at.fract() != 0. {
         None
     } else {
         Some((3. * at + bt) as usize)
