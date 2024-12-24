@@ -69,7 +69,13 @@ pub fn run() -> io::Result<()> {
 
 // returns token count or none
 fn solve(a: Vec2, b: Vec2, p: Vec2) -> Option<usize> {
-    Some(0)
+    let bt = (a.y * p.x - a.x * p.y) / (b.x * a.y - b.y * a.x);
+    let at = p.x / a.x - (b.x / a.x) * bt;
+    if bt.fract() != 0. && at.fract() != 0. {
+        None
+    } else {
+        Some((3. * at + bt) as usize)
+    }
 }
 // TODO: find min value of pt to return
 // 3 * at + bt = pt
