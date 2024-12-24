@@ -1,5 +1,4 @@
 use std::fs::File;
-use std::collections::HashMap;
 use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
 use std::env;
@@ -33,7 +32,7 @@ pub fn run() -> io::Result<()> {
         let line = line?;
         if ! line.is_empty() {
             if button_match.is_match(&line) {
-                for (_, [id,dx,dy]) in button_match.captures_iter(&line).map(|c| c.extract()) {
+                for (_, [dx,dy]) in button_match.captures_iter(&line).map(|c| c.extract()) {
                     results.push((dx.parse::<i32>().unwrap(), dy.parse::<i32>().unwrap()));
                 }
             } else if prize_match.is_match(&line) {
