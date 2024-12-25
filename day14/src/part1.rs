@@ -24,7 +24,7 @@ pub fn run() -> io::Result<()> {
     })?;
     let reader = BufReader::new(file);
 
-    let bot_match = Regex::new(r"^p\=(\d+),(\d+) v\=(-*\d+),(-*\d+)$").unwrap();
+    let bot_match = Regex::new(r"^p\=(\d+),(\d+) v\=(-\d+|\d+),(-\d+|\d+)$").unwrap();
     let mut bots = Vec::new();
     for line in reader.lines() {
         let line = line?;
