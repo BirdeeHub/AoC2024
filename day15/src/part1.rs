@@ -70,10 +70,13 @@ impl Display for Space {
 }
 
 #[derive(Debug,Clone,PartialEq)]
-struct Room(Vec<Vec<Space>>);
+struct Room {
+    map: Vec<Vec<Space>>,
+    bot_pos: Option<(usize,usize)>,
+}
 impl Room {
     pub fn new() -> Room {
-        Room(Vec::new())
+        Room { map: Vec::new(), bot_pos: None }
     }
     fn part1_total(&self) -> usize {
         let mut total = 0;
@@ -94,12 +97,12 @@ impl Deref for Room {
     type Target = Vec<Vec<Space>>;
 
     fn deref(&self) -> &Self::Target {
-        &self.0
+        &self.map
     }
 }
 impl DerefMut for Room {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
+        &mut self.map
     }
 }
 impl Display for Room {
