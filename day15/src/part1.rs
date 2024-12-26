@@ -3,21 +3,6 @@ use std::time::Instant;
 use std::io::{self, Read};
 use std::env;
 
-#[derive(Debug,Clone,Copy)]
-enum Move {
-    L,
-    R,
-    U,
-    D,
-}
-#[derive(Debug,Clone,Copy)]
-enum Space {
-    Empty,
-    Wall,
-    Box,
-    Robot,
-}
-
 fn read_file(file_path: &str) -> io::Result<String> {
     let mut contents = String::new();
     File::open(file_path)?.read_to_string(&mut contents)?;
@@ -60,12 +45,41 @@ pub fn run() -> io::Result<()> {
         }
     }
 
-    for row in map {
+    for row in &map {
         println!("{:?}",row)
     }
     println!("Moves: {:?}", moves);
 
+    println!("Part 1: {}", part1_total(&map));
+
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
+}
+
+#[derive(Debug,Clone,Copy)]
+enum Move {
+    L,
+    R,
+    U,
+    D,
+}
+#[derive(Debug,Clone,Copy)]
+enum Space {
+    Empty,
+    Wall,
+    Box,
+    Robot,
+}
+
+fn part1_total(map:&[Vec<Space>]) -> usize {
+    let mut total = 0;
+    for (i, row) in map.iter().enumerate() {
+        for (j, space) in row.iter().enumerate() {
+            if let Space::Box = space {
+                total += i*100+j;
+            }
+        }
+    }
+    total
 }
