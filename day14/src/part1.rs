@@ -41,6 +41,27 @@ impl Bot {
             y: (new_p.y % h + h) % h,
         };
     }
+    fn get_quad(&self, w: i32, h: i32) -> Option<Quads> {
+        if self.p.x < w / 2 && self.p.y < h / 2 {
+            Some(Quads::NE)
+        } else if self.p.x < w / 2 && self.p.y > h / 2 {
+            Some(Quads::SE)
+        } else if self.p.x > w / 2 && self.p.y < h / 2 {
+            Some(Quads::NW)
+        } else if self.p.x > w / 2 && self.p.y > h / 2 {
+            Some(Quads::SW)
+        } else {
+            // on the boundary
+            None
+        }
+    }
+}
+
+enum Quads {
+    NW,
+    NE,
+    SW,
+    SE,
 }
 
 pub fn run() -> io::Result<()> {
@@ -68,17 +89,25 @@ pub fn run() -> io::Result<()> {
     let room_w = 11;
     let room_h = 7;
 
+    let mut ne = 0;
+    let mut se = 0;
+    let mut sw = 0;
+    let mut nw = 0;
+
     for bot in &mut bots {
         for _ in 0..100 {
             bot.move_bot(room_w as i32, room_h as i32);
         }
-    }
-    let mut room = vec![vec![0; room_w]; room_h];
-    for bot in bots {
-        room[bot.p.y as usize][bot.p.x as usize] += 1;
+        let Some(q) = bot.get_quad(room_w as i32, room_h as i32) else { continue; };
+        match q {
+            Quads::NW => nw += 1,
+            Quads::NE => ne += 1,
+            Quads::SW => sw += 1,
+            Quads::SE => se += 1
+        }
     }
 
-    print_room(&room);
+    println!("ne: {}, nw: {}, se: {}, sw: {}", ne, nw, se, sw);
 
     println!("Time taken: {:?}", start.elapsed());
 
