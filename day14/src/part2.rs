@@ -4,47 +4,7 @@ use std::io::{self, BufRead, BufReader};
 use std::env;
 use std::ops::Add;
 use regex::Regex;
-use std::{thread, time::Duration};
-
-#[derive(Debug, Copy, Clone)]
-struct Vec2 {
-    x: i32,
-    y: i32
-}
-impl Vec2 {
-    fn new(x: i32, y: i32) -> Vec2 {
-        Vec2{x, y}
-    }
-    fn distance(&self, other: &Vec2) -> f64 {
-        (((self.x - other.x).pow(2) + (self.y - other.y).pow(2)) as f64).sqrt()
-    }
-}
-impl Add for Vec2 {
-    type Output = Vec2;
-    fn add(self, other: Vec2) -> Vec2 {
-        Vec2 {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-struct Bot {
-    p: Vec2,
-    v: Vec2
-}
-impl Bot {
-    fn move_bot(&mut self, w: i32, h: i32) {
-        // get new_p, if its more, get that with mod, add max to shift it
-        // then use mod again to wrap again if still bigger.
-        let new_p = self.p + self.v;
-        self.p = Vec2 {
-            x: (new_p.x % w + w) % w,
-            y: (new_p.y % h + h) % h,
-        };
-    }
-}
+use std::hash::{DefaultHasher, Hash, Hasher};
 
 pub fn run() -> io::Result<()> {
     let start = Instant::now();
@@ -70,25 +30,66 @@ pub fn run() -> io::Result<()> {
         }
     }
 
-    for i in 0..100000 {
+    let mut hashes = vec![calculate_hash(&bots)];
+    let mut i = 0;
+    loop {
         let mut room = vec![vec![false; room_w as usize]; room_h as usize];
         for bot in &mut bots {
             bot.move_bot(room_w, room_h);
             room[bot.p.y as usize][bot.p.x as usize] = true;
         }
         print_room(&room);
-        let entropy = calculate_closeness(&bots.iter().map(|b| b.p).collect());
-        if entropy < 45.0 {
-            thread::sleep(Duration::from_millis(1000));
-        }
-        thread::sleep(Duration::from_millis(100));
-        println!("{i},{entropy}");
-        println!();
+        let hash = calculate_hash(&bots);
+        if hashes.contains(&hash) {
+            println!("cycled at: {i}");
+            break;
+        } else {
+            hashes.push(hash);
+            i += 1;
+            println!("{i}\n");
+        };
     }
 
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
+}
+
+#[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
+struct Vec2 {
+    x: i32,
+    y: i32
+}
+impl Vec2 {
+    fn new(x: i32, y: i32) -> Vec2 {
+        Vec2{x, y}
+    }
+}
+impl Add for Vec2 {
+    type Output = Vec2;
+    fn add(self, other: Vec2) -> Vec2 {
+        Vec2 {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+struct Bot {
+    p: Vec2,
+    v: Vec2
+}
+impl Bot {
+    fn move_bot(&mut self, w: i32, h: i32) {
+        // get new_p, if its more, get that with mod, add max to shift it
+        // then use mod again to wrap again if still bigger.
+        let new_p = self.p + self.v;
+        self.p = Vec2 {
+            x: (new_p.x % w + w) % w,
+            y: (new_p.y % h + h) % h,
+        };
+    }
 }
 
 fn print_room(room: &[Vec<bool>]) {
@@ -100,21 +101,8 @@ fn print_room(room: &[Vec<bool>]) {
     }
 }
 
-fn calculate_closeness(positions: &Vec<Vec2>) -> f64 {
-    let mut distances = Vec::new();
-    let n = positions.len();
-
-    // pairwise distances
-    for i in 0..n {
-        for j in i + 1..n {
-            distances.push(positions[i].distance(&positions[j]));
-        }
-    }
-    if distances.is_empty() {
-        return 0.0;
-    }
-
-    // average distance
-    let total_distance: f64 = distances.iter().sum();
-    total_distance / distances.len() as f64
+fn calculate_hash<T: Hash>(t: &T) -> u64 {
+    let mut s = DefaultHasher::new();
+    t.hash(&mut s);
+    s.finish()
 }
