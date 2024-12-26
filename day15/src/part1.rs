@@ -85,6 +85,8 @@ impl Room {
         }
         total
     }
+    fn apply_move(&mut self, m: Move) {
+    }
 }
 impl Deref for Room {
     type Target = Vec<Vec<Space>>;
