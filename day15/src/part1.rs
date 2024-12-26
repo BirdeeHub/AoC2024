@@ -25,10 +25,10 @@ pub fn run() -> io::Result<()> {
     let mut moves = Vec::new();
     for c in movestr.chars() {
         match c {
-            '<' => moves.push(Move::L),
-            '>' => moves.push(Move::R),
-            '^' => moves.push(Move::U),
-            'v' => moves.push(Move::D),
+            '<' => moves.push(Moves::L),
+            '>' => moves.push(Moves::R),
+            '^' => moves.push(Moves::U),
+            'v' => moves.push(Moves::D),
             _ => {},
         }
     }
@@ -47,11 +47,21 @@ pub fn run() -> io::Result<()> {
 }
 
 #[derive(Debug,Clone,Copy)]
-enum Move {
+enum Moves {
     L,
     R,
     U,
     D,
+}
+impl Moves {
+    fn to_v(self) -> (isize,isize) {
+        match self {
+            Moves::L => (-1,0),
+            Moves::R => (1,0),
+            Moves::U => (0,-1),
+            Moves::D => (0,1),
+        }
+    }
 }
 #[derive(Debug,Clone,Copy,PartialEq)]
 enum Space {
@@ -91,18 +101,8 @@ impl Room {
         }
         total
     }
-    fn apply_move(&mut self, m: Move) {
-        //TODO: this
-        match m {
-            Move::L => {
-            },
-            Move::R => {
-            },
-            Move::U => {
-            },
-            Move::D => {
-            },
-        };
+    fn apply_move(&mut self, m: Moves) {
+        let (dx,dy) = m.to_v();
     }
 }
 impl Deref for Room {
