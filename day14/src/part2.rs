@@ -6,7 +6,7 @@ use std::ops::Add;
 use regex::Regex;
 use std::{thread, time::Duration};
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 struct Vec2 {
     x: i32,
     y: i32
@@ -15,10 +15,12 @@ impl Vec2 {
     fn new(x: i32, y: i32) -> Vec2 {
         Vec2{x, y}
     }
+    fn distance(&self, other: &Vec2) -> f64 {
+        (((self.x - other.x).pow(2) + (self.y - other.y).pow(2)) as f64).sqrt()
+    }
 }
 impl Add for Vec2 {
     type Output = Vec2;
-
     fn add(self, other: Vec2) -> Vec2 {
         Vec2 {
             x: self.x + other.x,
@@ -68,14 +70,19 @@ pub fn run() -> io::Result<()> {
         }
     }
 
-    for _ in 0..100000 {
+    for i in 0..100000 {
         let mut room = vec![vec![false; room_w as usize]; room_h as usize];
         for bot in &mut bots {
             bot.move_bot(room_w, room_h);
             room[bot.p.y as usize][bot.p.x as usize] = true;
         }
         print_room(&room);
+        let entropy = calculate_closeness(&bots.iter().map(|b| b.p).collect());
+        if entropy < 40.0 {
+            thread::sleep(Duration::from_millis(1000));
+        }
         thread::sleep(Duration::from_millis(100));
+        println!("{i},{entropy}");
         println!();
     }
 
@@ -91,4 +98,25 @@ fn print_room(room: &[Vec<bool>]) {
         }
         println!();
     }
+}
+
+fn calculate_closeness(positions: &Vec<Vec2>) -> f64 {
+    let mut distances = Vec::new();
+    let n = positions.len();
+
+    // Calculate pairwise distances
+    for i in 0..n {
+        for j in i + 1..n {
+            distances.push(positions[i].distance(&positions[j]));
+        }
+    }
+
+    // If there are no distances (less than two positions), return 0
+    if distances.is_empty() {
+        return 0.0;
+    }
+
+    // Calculate the average distance
+    let total_distance: f64 = distances.iter().sum();
+    total_distance / distances.len() as f64
 }
