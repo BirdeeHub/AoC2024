@@ -108,6 +108,8 @@ pub fn run() -> io::Result<()> {
 
     println!("ne: {}, nw: {}, se: {}, sw: {}", ne, nw, se, sw);
 
+    println!("Part 1: {}", ne * nw * se * sw);
+
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
