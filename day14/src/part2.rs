@@ -8,6 +8,7 @@ use std::hash::{DefaultHasher, Hash, Hasher};
 use std::{thread, time::Duration};
 
 fn find_tree(bots: &[Bot],room: &[Vec<bool>]) -> bool {
+    let bot_pos = bots.iter().map(|b| b.p).collect::<Vec<Vec2>>();
     false
 }
 
