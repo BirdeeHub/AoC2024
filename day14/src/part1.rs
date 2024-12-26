@@ -71,6 +71,8 @@ pub fn run() -> io::Result<()> {
         Some(fp) => fp.to_string(),
         _ => env::var("AOC_INPUT").expect("AOC_INPUT not set"),
     })?;
+    let room_w = args.get(2).expect("room_w not set (arg 2)").parse().unwrap();
+    let room_h = args.get(3).expect("room_h not set (arg 3)").parse().unwrap();
     let reader = BufReader::new(file);
 
     let bot_match = Regex::new(r"^p\=(\d+),(\d+) v\=(-\d+|\d+),(-\d+|\d+)$").unwrap();
@@ -85,9 +87,6 @@ pub fn run() -> io::Result<()> {
             }
         }
     }
-
-    let room_w = 11;
-    let room_h = 7;
 
     let mut ne = 0;
     let mut se = 0;
