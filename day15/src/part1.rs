@@ -36,6 +36,7 @@ pub fn run() -> io::Result<()> {
     println!("Moves: {:?}", moves);
     for m in moves {
         map.apply_move(m);
+        println!("{:?}",map.bot_pos);
     }
     println!();
     println!("{}",map);
@@ -134,20 +135,27 @@ impl std::str::FromStr for Room {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut map = Room::new();
-        for line in s.lines() {
+        let mut bot = false;
+        for (i, line) in s.lines().enumerate() {
             let mut row = Vec::new();
-            for c in line.chars() {
+            for (j, c) in line.chars().enumerate() {
                 match c {
                     '.' => row.push(Space::Empty),
                     '#' => row.push(Space::Wall),
                     'O' => row.push(Space::Box),
-                    '@' => row.push(Space::Robot),
+                    '@' => {
+                        if bot { return Err("Multiple robots".to_string()); }
+                        bot = true;
+                        map.bot_pos = Some((i,j));
+                        row.push(Space::Robot);
+                    },
                     _ => {},
                 }
             }
             if row.is_empty() { continue; }
             map.push(row);
         }
+        if ! bot { return Err("Robot not found".to_string()); }
         let mut x = map[0].len();
         for row in map.iter() {
             if row.len() != x {
