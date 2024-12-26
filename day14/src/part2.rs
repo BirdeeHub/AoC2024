@@ -7,6 +7,10 @@ use regex::Regex;
 use std::hash::{DefaultHasher, Hash, Hasher};
 use std::{thread, time::Duration};
 
+fn find_tree(bots: &[Bot],room: &[Vec<bool>]) -> bool {
+    false
+}
+
 pub fn run() -> io::Result<()> {
     let start = Instant::now();
     let args: Vec<String> = std::env::args().collect();
@@ -110,8 +114,4 @@ fn calculate_hash<T: Hash>(t: &T) -> u64 {
     let mut s = DefaultHasher::new();
     t.hash(&mut s);
     s.finish()
-}
-
-fn find_tree(bots: &[Bot],room: &[Vec<bool>]) -> bool {
-    false
 }
