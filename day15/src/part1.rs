@@ -33,6 +33,7 @@ pub fn run() -> io::Result<()> {
                 _ => {},
             }
         }
+        if row.is_empty() { continue; }
         map.push(row);
     }
     let movestr = inparts[1];
@@ -115,11 +116,14 @@ impl DerefMut for Room {
 impl Display for Room {
     fn fmt(&self, fmt:&mut Formatter) -> Result<(), std::fmt::Error> {
         let mut res = String::new();
-        for row in self.iter() {
+        let mut iter = self.iter();
+        while let Some(row) = iter.next() {
             for space in row.iter() {
-                res.push_str(&format!("{space}"));
+                res.push_str(&format!("{}",space));
             }
-            res.push('\n');
+            if iter.len() > 0 {
+                res.push('\n');
+            }
         }
         fmt.write_str(&res)
     }
