@@ -55,6 +55,7 @@ pub fn run() -> io::Result<()> {
         }
     }
 
+    let mut trees = Vec::new();
     let mut hashes = vec![calculate_hash(&bots)];
     let mut i = 0;
     loop {
@@ -67,6 +68,7 @@ pub fn run() -> io::Result<()> {
         print_room(&room);
         if find_tree(&bots, &room) {
             println!("found tree at: {i}");
+            trees.push(i);
             thread::sleep(Duration::from_millis(2000));
         }
         let hash = calculate_hash(&bots);
@@ -78,6 +80,8 @@ pub fn run() -> io::Result<()> {
             println!("{i}\n");
         };
     }
+
+    println!("Found trees at: {:?}",trees);
 
     println!("Time taken: {:?}", start.elapsed());
 
