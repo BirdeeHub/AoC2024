@@ -18,7 +18,7 @@ fn find_tree(bots: &[Bot], room: &[Vec<bool>]) -> bool {
                     && y >= 0
                     && x < room.len() as i32
                     && y < room[0].len() as i32
-                    && room[y as usize][x as usize]
+                    && room[x as usize][y as usize]
                 {
                     count += 1;
                     c = true;
