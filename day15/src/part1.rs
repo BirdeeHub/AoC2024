@@ -76,7 +76,7 @@ struct Room {
     bot_pos: Option<(usize,usize)>,
 }
 impl Room {
-    pub fn new() -> Room {
+    fn new() -> Room {
         Room { map: Vec::new(), bot_pos: None }
     }
     fn part1_total(&self) -> usize {
