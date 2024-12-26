@@ -1,4 +1,6 @@
 use std::fs::File;
+use std::fmt::{Display, Formatter};
+use std::ops::{Deref, DerefMut};
 use std::time::Instant;
 use std::io::{self, Read};
 use std::env;
@@ -19,7 +21,7 @@ pub fn run() -> io::Result<()> {
     let contents = read_file(&filepath).unwrap();
     let inparts:Vec<&str> = contents.split("\n\n").collect();
     let mapstr = inparts[0];
-    let mut map:Vec<Vec<Space>> = Vec::new();
+    let mut map = Room::new();
     for line in mapstr.lines() {
         let mut row = Vec::new();
         for c in line.chars() {
@@ -45,12 +47,10 @@ pub fn run() -> io::Result<()> {
         }
     }
 
-    for row in &map {
-        println!("{:?}",row)
-    }
+    println!("{}",map);
     println!("Moves: {:?}", moves);
 
-    println!("Part 1: {}", part1_total(&map));
+    println!("Part 1: {}", map.part1_total());
 
     println!("Time taken: {:?}", start.elapsed());
 
@@ -64,22 +64,63 @@ enum Move {
     U,
     D,
 }
-#[derive(Debug,Clone,Copy)]
+#[derive(Debug,Clone,Copy,PartialEq)]
 enum Space {
     Empty,
     Wall,
     Box,
     Robot,
 }
+impl Display for Space {
+    fn fmt(&self, fmt:&mut Formatter) -> Result<(), std::fmt::Error> {
+        fmt.write_str(match self {
+            Space::Robot => "@",
+            Space::Box => "O",
+            Space::Wall => "#",
+            Space::Empty => ".",
+        })
+    }
+}
 
-fn part1_total(map:&[Vec<Space>]) -> usize {
-    let mut total = 0;
-    for (i, row) in map.iter().enumerate() {
-        for (j, space) in row.iter().enumerate() {
-            if let Space::Box = space {
-                total += i*100+j;
+#[derive(Debug,Clone,PartialEq)]
+struct Room(Vec<Vec<Space>>);
+impl Room {
+    pub fn new() -> Room {
+        Room(Vec::new())
+    }
+    fn part1_total(&self) -> usize {
+        let mut total = 0;
+        for (i, row) in self.iter().enumerate() {
+            for (j, space) in row.iter().enumerate() {
+                if let Space::Box = space {
+                    total += i*100+j;
+                }
             }
         }
+        total
     }
-    total
+}
+impl Deref for Room {
+    type Target = Vec<Vec<Space>>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl DerefMut for Room {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+impl Display for Room {
+    fn fmt(&self, fmt:&mut Formatter) -> Result<(), std::fmt::Error> {
+        let mut res = String::new();
+        for row in self.iter() {
+            for space in row.iter() {
+                res.push_str(&format!("{space}"));
+            }
+            res.push('\n');
+        }
+        fmt.write_str(&res)
+    }
 }
