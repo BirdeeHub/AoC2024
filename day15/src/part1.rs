@@ -134,7 +134,7 @@ impl std::str::FromStr for Room {
         let mut x = map[0].len();
         for row in map.iter() {
             if row.len() != x {
-                return Err("Map is not square".to_string());
+                return Err("Map is irregular".to_string());
             } else {
                 x = row.len();
             }
