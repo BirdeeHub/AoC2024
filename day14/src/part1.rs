@@ -34,7 +34,7 @@ struct Bot {
 impl Bot {
     fn move_bot(&mut self, w: i32, h: i32) {
         // get new_p, if its more, get that with mod, add max to shift it
-        // then use mod again to limit it and wrap again if still bigger.
+        // then use mod again to wrap again if still bigger.
         let new_p = self.p + self.v;
         self.p = Vec2 {
             x: (new_p.x % w + w) % w,
