@@ -84,7 +84,7 @@ impl Display for Space {
 #[derive(Debug,Clone,PartialEq)]
 struct Room {
     map: Vec<Vec<Space>>,
-    bot_pos: Option<(usize,usize)>,
+    bot_pos: (usize,usize),
 }
 impl Room {
     fn part1_total(&self) -> usize {
@@ -133,8 +133,8 @@ impl Display for Room {
 impl std::str::FromStr for Room {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut map = Room { map: Vec::new(), bot_pos: None };
-        let mut bot = false;
+        let mut map = Vec::new();
+        let mut bot_pos: Option<(usize,usize)> = None;
         for (i, line) in s.lines().enumerate() {
             let mut row = Vec::new();
             for (j, c) in line.chars().enumerate() {
@@ -143,9 +143,8 @@ impl std::str::FromStr for Room {
                     '#' => row.push(Space::Wall),
                     'O' => row.push(Space::Box),
                     '@' => {
-                        if bot { return Err("Multiple robots".to_string()); }
-                        bot = true;
-                        map.bot_pos = Some((i,j));
+                        if bot_pos.is_some() { return Err("Multiple robots".to_string()); }
+                        bot_pos = Some((i,j));
                         row.push(Space::Robot);
                     },
                     _ => {},
@@ -154,7 +153,6 @@ impl std::str::FromStr for Room {
             if row.is_empty() { continue; }
             map.push(row);
         }
-        if ! bot { return Err("Robot not found".to_string()); }
         let mut x = map[0].len();
         for row in map.iter() {
             if row.len() != x {
@@ -163,6 +161,9 @@ impl std::str::FromStr for Room {
                 x = row.len();
             }
         }
-        Ok(map)
+        match bot_pos { 
+            None => Err("Robot not found".to_string()),
+            Some(bp) => Ok(Room { map, bot_pos: bp }),
+        }
     }
 }
