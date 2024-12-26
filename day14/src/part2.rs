@@ -35,20 +35,22 @@ pub fn run() -> io::Result<()> {
     let mut i = 0;
     loop {
         let mut room = vec![vec![false; room_w as usize]; room_h as usize];
+        i += 1;
         for bot in &mut bots {
             bot.move_bot(room_w, room_h);
             room[bot.p.y as usize][bot.p.x as usize] = true;
         }
         print_room(&room);
-        //TODO: find some heuristic for a tree
-        thread::sleep(Duration::from_millis(250));
+        if find_tree(&bots, &room) {
+            thread::sleep(Duration::from_millis(2000));
+            println!("found tree at: {i}");
+        }
         let hash = calculate_hash(&bots);
         if hashes.contains(&hash) {
             println!("cycled at: {i}");
             break;
         } else {
             hashes.push(hash);
-            i += 1;
             println!("{i}\n");
         };
     }
@@ -108,4 +110,8 @@ fn calculate_hash<T: Hash>(t: &T) -> u64 {
     let mut s = DefaultHasher::new();
     t.hash(&mut s);
     s.finish()
+}
+
+fn find_tree(bots: &[Bot],room: &[Vec<bool>]) -> bool {
+    false
 }
