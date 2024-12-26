@@ -5,6 +5,7 @@ use std::env;
 use std::ops::Add;
 use regex::Regex;
 use std::hash::{DefaultHasher, Hash, Hasher};
+use std::{thread, time::Duration};
 
 pub fn run() -> io::Result<()> {
     let start = Instant::now();
@@ -39,6 +40,8 @@ pub fn run() -> io::Result<()> {
             room[bot.p.y as usize][bot.p.x as usize] = true;
         }
         print_room(&room);
+        //TODO: find some heuristic for a tree
+        thread::sleep(Duration::from_millis(250));
         let hash = calculate_hash(&bots);
         if hashes.contains(&hash) {
             println!("cycled at: {i}");
