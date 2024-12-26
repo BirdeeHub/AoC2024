@@ -6,7 +6,7 @@ use std::ops::Add;
 use regex::Regex;
 use std::{thread, time::Duration};
 
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone)]
 struct Vec2 {
     x: i32,
     y: i32
@@ -104,19 +104,17 @@ fn calculate_closeness(positions: &Vec<Vec2>) -> f64 {
     let mut distances = Vec::new();
     let n = positions.len();
 
-    // Calculate pairwise distances
+    // pairwise distances
     for i in 0..n {
         for j in i + 1..n {
             distances.push(positions[i].distance(&positions[j]));
         }
     }
-
-    // If there are no distances (less than two positions), return 0
     if distances.is_empty() {
         return 0.0;
     }
 
-    // Calculate the average distance
+    // average distance
     let total_distance: f64 = distances.iter().sum();
     total_distance / distances.len() as f64
 }
