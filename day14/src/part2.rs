@@ -11,7 +11,7 @@ fn find_tree(bots: &[Bot], room: &[Vec<bool>]) -> bool {
     let positions = bots.iter().map(|b| b.p).collect::<Vec<Vec2>>();
     let mut count = 0;
     for bot in positions {
-        for x in bot.x - 1..=bot.y + 1 {
+        for x in bot.x - 1..=bot.x + 1 {
             let mut c = false;
             for y in bot.y - 1..=bot.y + 1 {
                 if x >= 0
