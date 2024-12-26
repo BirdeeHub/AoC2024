@@ -20,22 +20,7 @@ pub fn run() -> io::Result<()> {
     };
     let contents = read_file(&filepath).unwrap();
     let inparts:Vec<&str> = contents.split("\n\n").collect();
-    let mapstr = inparts[0];
-    let mut map = Room::new();
-    for line in mapstr.lines() {
-        let mut row = Vec::new();
-        for c in line.chars() {
-            match c {
-                '.' => row.push(Space::Empty),
-                '#' => row.push(Space::Wall),
-                'O' => row.push(Space::Box),
-                '@' => row.push(Space::Robot),
-                _ => {},
-            }
-        }
-        if row.is_empty() { continue; }
-        map.push(row);
-    }
+    let map:Room = inparts[0].parse().unwrap();
     let movestr = inparts[1];
     let mut moves = Vec::new();
     for c in movestr.chars() {
@@ -126,5 +111,34 @@ impl Display for Room {
             }
         }
         fmt.write_str(&res)
+    }
+}
+impl std::str::FromStr for Room {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut map = Room::new();
+        for line in s.lines() {
+            let mut row = Vec::new();
+            for c in line.chars() {
+                match c {
+                    '.' => row.push(Space::Empty),
+                    '#' => row.push(Space::Wall),
+                    'O' => row.push(Space::Box),
+                    '@' => row.push(Space::Robot),
+                    _ => {},
+                }
+            }
+            if row.is_empty() { continue; }
+            map.push(row);
+        }
+        let mut x = map[0].len();
+        for row in map.iter() {
+            if row.len() != x {
+                return Err("Map is not square".to_string());
+            } else {
+                x = row.len();
+            }
+        }
+        Ok(map)
     }
 }
