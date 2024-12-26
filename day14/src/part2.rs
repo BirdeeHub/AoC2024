@@ -78,7 +78,7 @@ pub fn run() -> io::Result<()> {
         }
         print_room(&room);
         let entropy = calculate_closeness(&bots.iter().map(|b| b.p).collect());
-        if entropy < 40.0 {
+        if entropy < 45.0 {
             thread::sleep(Duration::from_millis(1000));
         }
         thread::sleep(Duration::from_millis(100));
