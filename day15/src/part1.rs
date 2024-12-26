@@ -87,9 +87,6 @@ struct Room {
     bot_pos: Option<(usize,usize)>,
 }
 impl Room {
-    fn new() -> Room {
-        Room { map: Vec::new(), bot_pos: None }
-    }
     fn part1_total(&self) -> usize {
         let mut total = 0;
         for (i, row) in self.iter().enumerate() {
@@ -136,7 +133,7 @@ impl Display for Room {
 impl std::str::FromStr for Room {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut map = Room::new();
+        let mut map = Room { map: Vec::new(), bot_pos: None };
         let mut bot = false;
         for (i, line) in s.lines().enumerate() {
             let mut row = Vec::new();
