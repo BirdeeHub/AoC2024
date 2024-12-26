@@ -10,6 +10,13 @@ enum Move {
     U,
     D,
 }
+#[derive(Debug,Clone,Copy)]
+enum Space {
+    Empty,
+    Wall,
+    Box,
+    Robot,
+}
 
 fn read_file(file_path: &str) -> io::Result<String> {
     let mut contents = String::new();
@@ -27,8 +34,19 @@ pub fn run() -> io::Result<()> {
     let contents = read_file(&filepath).unwrap();
     let inparts:Vec<&str> = contents.split("\n\n").collect();
     let mapstr = inparts[0];
-    let map:Vec<Vec<char>> = Vec::new();
+    let mut map:Vec<Vec<Space>> = Vec::new();
     for line in mapstr.lines() {
+        let mut row = Vec::new();
+        for c in line.chars() {
+            match c {
+                '.' => row.push(Space::Empty),
+                '#' => row.push(Space::Wall),
+                'O' => row.push(Space::Box),
+                '@' => row.push(Space::Robot),
+                _ => {},
+            }
+        }
+        map.push(row);
     }
     let movestr = inparts[1];
     let mut moves = Vec::new();
@@ -41,6 +59,11 @@ pub fn run() -> io::Result<()> {
             _ => {},
         }
     }
+
+    for row in map {
+        println!("{:?}",row)
+    }
+    println!("Moves: {:?}", moves);
 
     println!("Time taken: {:?}", start.elapsed());
 
