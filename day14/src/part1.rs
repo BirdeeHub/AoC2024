@@ -96,9 +96,9 @@ pub fn run() -> io::Result<()> {
 
     for bot in &mut bots {
         for _ in 0..100 {
-            bot.move_bot(room_w as i32, room_h as i32);
+            bot.move_bot(room_w, room_h);
         }
-        let Some(q) = bot.get_quad(room_w as i32, room_h as i32) else { continue; };
+        let Some(q) = bot.get_quad(room_w, room_h) else { continue; };
         match q {
             Quads::NW => nw += 1,
             Quads::NE => ne += 1,
@@ -112,13 +112,4 @@ pub fn run() -> io::Result<()> {
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
-}
-
-fn print_room(room: &[Vec<usize>]) {
-    for row in room {
-        for val in row {
-            print!("{}", val);
-        }
-        println!();
-    }
 }
