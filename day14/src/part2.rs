@@ -8,12 +8,11 @@ use std::time::Instant;
 use std::{thread, time::Duration};
 
 fn find_tree(bots: &[Bot], room: &[Vec<bool>], temp: f32) -> bool {
-    let positions = bots.iter().map(|b| b.p).collect::<Vec<Vec2>>();
     let mut count = 0;
-    for bot in positions {
-        for x in bot.x - 1..=bot.x + 1 {
+    for bot in bots {
+        for x in bot.p.x - 1..=bot.p.x + 1 {
             let mut c = false;
-            for y in bot.y - 1..=bot.y + 1 {
+            for y in bot.p.y - 1..=bot.p.y + 1 {
                 if x >= 0
                     && y >= 0
                     && x < room.len() as i32
