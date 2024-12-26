@@ -28,7 +28,7 @@ fn find_tree(bots: &[Bot], room: &[Vec<bool>]) -> bool {
             if c { continue; };
         }
     }
-    count > bots.len() / 2
+    count as f32 > bots.len() as f32 * 0.6
 }
 
 pub fn run() -> io::Result<()> {
