@@ -7,7 +7,7 @@ use std::ops::Add;
 use std::time::Instant;
 use std::{thread, time::Duration};
 
-fn find_tree(bots: &[Bot], room: &[Vec<bool>]) -> bool {
+fn find_tree(bots: &[Bot], room: &[Vec<bool>], temp: f32) -> bool {
     let positions = bots.iter().map(|b| b.p).collect::<Vec<Vec2>>();
     let mut count = 0;
     for bot in positions {
@@ -28,7 +28,7 @@ fn find_tree(bots: &[Bot], room: &[Vec<bool>]) -> bool {
             if c { continue; };
         }
     }
-    count as f32 > bots.len() as f32 * 0.6
+    count as f32 > bots.len() as f32 * temp
 }
 
 pub fn run() -> io::Result<()> {
@@ -40,6 +40,7 @@ pub fn run() -> io::Result<()> {
     })?;
     let room_w = args.get(2).expect("room_w not set (arg 2)").parse().unwrap();
     let room_h = args.get(3).expect("room_h not set (arg 3)").parse().unwrap();
+    let temp = args.get(4).map_or(0.6,|v|v.parse().unwrap_or(0.6));
     let reader = BufReader::new(file);
 
     let bot_match = Regex::new(r"^p\=(\d+),(\d+) v\=(-\d+|\d+),(-\d+|\d+)$").unwrap();
@@ -66,7 +67,7 @@ pub fn run() -> io::Result<()> {
             room[bot.p.y as usize][bot.p.x as usize] = true;
         }
         print_room(&room);
-        if find_tree(&bots, &room) {
+        if find_tree(&bots, &room, temp) {
             println!("found tree at: {i}");
             trees.push(i);
             thread::sleep(Duration::from_millis(2000));
