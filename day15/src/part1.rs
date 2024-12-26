@@ -20,7 +20,7 @@ pub fn run() -> io::Result<()> {
     };
     let contents = read_file(&filepath).unwrap();
     let inparts:Vec<&str> = contents.split("\n\n").collect();
-    let map:Room = inparts[0].parse().unwrap();
+    let mut map:Room = inparts[0].parse().unwrap();
     let movestr = inparts[1];
     let mut moves = Vec::new();
     for c in movestr.chars() {
@@ -32,14 +32,15 @@ pub fn run() -> io::Result<()> {
             _ => {},
         }
     }
-
     println!("{}",map);
     println!("Moves: {:?}", moves);
-
+    for m in moves {
+        map.apply_move(m);
+    }
+    println!();
+    println!("{}",map);
     println!("Part 1: {}", map.part1_total());
-
     println!("Time taken: {:?}", start.elapsed());
-
     Ok(())
 }
 
@@ -86,6 +87,7 @@ impl Room {
         total
     }
     fn apply_move(&mut self, m: Move) {
+        //TODO: this
     }
 }
 impl Deref for Room {
