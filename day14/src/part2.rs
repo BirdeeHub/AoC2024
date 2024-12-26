@@ -1,15 +1,34 @@
-use std::fs::File;
-use std::time::Instant;
-use std::io::{self, BufRead, BufReader};
-use std::env;
-use std::ops::Add;
 use regex::Regex;
+use std::env;
+use std::fs::File;
 use std::hash::{DefaultHasher, Hash, Hasher};
+use std::io::{self, BufRead, BufReader};
+use std::ops::Add;
+use std::time::Instant;
 use std::{thread, time::Duration};
 
-fn find_tree(bots: &[Bot],room: &[Vec<bool>]) -> bool {
+fn find_tree(bots: &[Bot], room: &[Vec<bool>]) -> bool {
     let positions = bots.iter().map(|b| b.p).collect::<Vec<Vec2>>();
-    false
+    let mut count = 0;
+    for bot in positions {
+        for x in bot.x - 1..=bot.y + 1 {
+            let mut c = false;
+            for y in bot.y - 1..=bot.y + 1 {
+                if x >= 0
+                    && y >= 0
+                    && x <= room.len() as i32
+                    && y <= room[0].len() as i32
+                    && room[y as usize][x as usize]
+                {
+                    count += 1;
+                    c = true;
+                    continue;
+                }
+            }
+            if c { continue; };
+        }
+    }
+    count > bots.len() / 2
 }
 
 pub fn run() -> io::Result<()> {
@@ -27,11 +46,11 @@ pub fn run() -> io::Result<()> {
     let mut bots = Vec::new();
     for line in reader.lines() {
         let line = line?;
-        if ! line.is_empty() && bot_match.is_match(&line) {
-            for (_, [x,y,dx,dy]) in bot_match.captures_iter(&line).map(|c| c.extract()) {
+        if !line.is_empty() && bot_match.is_match(&line) {
+            for (_, [x, y, dx, dy]) in bot_match.captures_iter(&line).map(|c| c.extract()) {
                 let p = Vec2::new(x.parse().unwrap(), y.parse().unwrap());
                 let v = Vec2::new(dx.parse().unwrap(), dy.parse().unwrap());
-                bots.push(Bot{p,v});
+                bots.push(Bot { p, v });
             }
         }
     }
@@ -68,11 +87,11 @@ pub fn run() -> io::Result<()> {
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
 struct Vec2 {
     x: i32,
-    y: i32
+    y: i32,
 }
 impl Vec2 {
     fn new(x: i32, y: i32) -> Vec2 {
-        Vec2{x, y}
+        Vec2 { x, y }
     }
 }
 impl Add for Vec2 {
@@ -88,7 +107,7 @@ impl Add for Vec2 {
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 struct Bot {
     p: Vec2,
-    v: Vec2
+    v: Vec2,
 }
 impl Bot {
     fn move_bot(&mut self, w: i32, h: i32) {
@@ -105,7 +124,7 @@ impl Bot {
 fn print_room(room: &[Vec<bool>]) {
     for row in room {
         for cell in row {
-            print!("{}", if *cell {"#"} else {"."});
+            print!("{}", if *cell { "#" } else { "." });
         }
         println!();
     }
