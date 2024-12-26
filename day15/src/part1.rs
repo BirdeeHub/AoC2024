@@ -35,9 +35,10 @@ pub fn run() -> io::Result<()> {
     println!("{}",map);
     println!("Moves: {:?}", moves);
     for m in moves {
-        map.apply_move(m);
         println!("{:?}",map.bot_pos);
+        map.apply_move(m);
     }
+    println!("{:?}",map.bot_pos);
     println!();
     println!("{}",map);
     println!("Part 1: {}", map.part1_total());
