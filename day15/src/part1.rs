@@ -91,6 +91,16 @@ impl Room {
     }
     fn apply_move(&mut self, m: Move) {
         //TODO: this
+        match m {
+            Move::L => {
+            },
+            Move::R => {
+            },
+            Move::U => {
+            },
+            Move::D => {
+            },
+        };
     }
 }
 impl Deref for Room {
