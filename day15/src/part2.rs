@@ -81,6 +81,7 @@ impl Room {
         let v = m.to_v();
         let mut newpos = self.bot_pos;
         while let Some(space) = self.get_pos(newpos) {
+            //TODO: actually move the intermediate boxes
             match space {
                 Space::Wall => break,
                 Space::Empty => {
@@ -146,15 +147,37 @@ impl DerefMut for Room {
         &mut self.map
     }
 }
+
 impl Display for Room {
     fn fmt(&self, fmt:&mut Formatter) -> Result<(), std::fmt::Error> {
         let mut res = String::new();
         let mut iter = self.iter();
+        let mut j = 0;
         while let Some(row) = iter.next() {
-            for space in row.iter() {
+            for (i, space) in row.iter().enumerate() {
                 res.push_str(match space {
                     Space::Robot => "@",
-                    Space::Box(_) => "O",
+                    Space::Box(locs) => {
+                        if let Some(l) = locs.first() {
+                            if l.x == i as i32 && l.y == j {
+                                if locs.len() > 1 {
+                                    "["
+                                } else {
+                                    "O"
+                                }
+                            } else if let Some(l) = locs.last() {
+                                if l.x == i as i32 && l.y == j {
+                                    "]"
+                                } else {
+                                    "="
+                                }
+                            } else {
+                                "O"
+                            }
+                        } else {
+                            "O"
+                        }
+                    },
                     Space::Wall => "#",
                     Space::Empty => ".",
                 });
@@ -162,11 +185,11 @@ impl Display for Room {
             if iter.len() > 0 {
                 res.push('\n');
             }
+            j += 1;
         }
         fmt.write_str(&res)
     }
 }
-
 #[derive(Debug, Copy, Clone,PartialEq)]
 struct Vec2 {
     x: i32,
