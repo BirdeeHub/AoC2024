@@ -104,7 +104,7 @@ impl Room {
     // TODO:
     // returns None if no move should occur
     // and if a move should occur,
-    // will return the locations of extra box values that should be moved
+    // will return all locations of extra Space::Box values that should be moved
     fn check_move(&self, m: Moves) -> Option<Vec<Vec2>> {
         None
     }
