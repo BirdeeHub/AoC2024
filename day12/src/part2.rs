@@ -75,40 +75,41 @@ impl Region {
         self.push(plot);
     }
     fn calc_cost(&self, size: (usize,usize)) -> u64 {
-        let area = self.len() as u64;
-        // TODO: fix for part 2 so that its corners * area instead
-        let mut acutes = Vec::new();
-        let perimeter = self.iter().fold(0, |acc, plot| acc + (match plot.edges as u64 {
-            4 => 4,
-            3 => 2,
-            2 => {
-                let outers = self.go_past_edges(&plot.pos);
-                for (x, y) in outers { //<- will not iterate more times than there are edges, and they are the possible locations of an acute
-                    if acutes.contains(&(x, y)) || x >= size.0 || y >= size.1 {
-                        continue;
-                    };
-                    // TODO: check if acute angle
-                    // a 1 edge plot is acute if it has a neighbor with 0 edges and a neighbor with 1+ edges
-                    // perpendicular to the line between current and outsidespace
-                    // place the location of the external space past the 1 edge into the acutes list, return 1
-                }
-                // TODO: check oblique corners
-            },
-            1 => {
-                let outers = self.go_past_edges(&plot.pos);
-                for (x, y) in outers { //<- will not iterate more times than there are edges, and they are the possible locations of an acute
-                    if acutes.contains(&(x, y)) || x >= size.0 || y >= size.1 {
-                        continue;
-                    };
-                    // TODO: check if acute angle
-                    // a 1 edge plot is acute if it has a neighbor with 0 edges and a neighbor with 1+ edges
-                    // perpendicular to the line between current and outsidespace
-                    // place the location of the external space past the 1 edge into the acutes list, return 1
-                }
-            },
-            0 => 0,
-        }));
-        perimeter * area
+        //let area = self.len() as u64;
+        //// TODO: fix for part 2 so that its corners * area instead
+        //let mut acutes = Vec::new();
+        //let perimeter = self.iter().fold(0, |acc, plot| acc + (match plot.edges as u64 {
+        //    4 => 4,
+        //    3 => 2,
+        //    2 => {
+        //        let outers = self.go_past_edges(&plot.pos);
+        //        for (x, y) in outers { //<- will not iterate more times than there are edges, and they are the possible locations of an acute
+        //            if acutes.contains(&(x, y)) || x >= size.0 || y >= size.1 {
+        //                continue;
+        //            };
+        //            // TODO: check if acute angle
+        //            // a 1 edge plot is acute if it has a neighbor with 0 edges and a neighbor with 1+ edges
+        //            // perpendicular to the line between current and outsidespace
+        //            // place the location of the external space past the 1 edge into the acutes list, return 1
+        //        }
+        //        // TODO: check oblique corners
+        //    },
+        //    1 => {
+        //        let outers = self.go_past_edges(&plot.pos);
+        //        for (x, y) in outers { //<- will not iterate more times than there are edges, and they are the possible locations of an acute
+        //            if acutes.contains(&(x, y)) || x >= size.0 || y >= size.1 {
+        //                continue;
+        //            };
+        //            // TODO: check if acute angle
+        //            // a 1 edge plot is acute if it has a neighbor with 0 edges and a neighbor with 1+ edges
+        //            // perpendicular to the line between current and outsidespace
+        //            // place the location of the external space past the 1 edge into the acutes list, return 1
+        //        }
+        //    },
+        //    0 => 0,
+        //}));
+        //perimeter * area
+        0
     }
 
     fn go_past_edges(&self, pos: &Position) -> Vec<(usize, usize)> {
