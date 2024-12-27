@@ -35,8 +35,7 @@ pub fn run() -> io::Result<()> {
     };
     let filetext = read_file(&filepath)?;
     let contents:Vec<&str> = filetext.split("\n\n").collect();
-    let mapstr = make_doubled(contents[0]);
-    let mut map:Room = mapstr.parse().unwrap();
+    let mut map:Room = make_doubled(contents[0]).parse().unwrap();
     let movestr = contents[1];
     let mut moves = Vec::new();
     for c in movestr.chars() {
@@ -51,9 +50,9 @@ pub fn run() -> io::Result<()> {
     println!("{}",map);
     println!("Moves: {:?}", moves);
     for m in moves {
-        //println!();
+        println!();
         map.apply_move(m);
-        //println!("{}",map);
+        println!("{}",map);
     }
     println!();
     println!("{}",map);
