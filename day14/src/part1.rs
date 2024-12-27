@@ -5,65 +5,6 @@ use std::env;
 use std::ops::Add;
 use regex::Regex;
 
-#[derive(Debug, Copy, Clone)]
-struct Vec2 {
-    x: i32,
-    y: i32
-}
-impl Vec2 {
-    fn new(x: i32, y: i32) -> Vec2 {
-        Vec2{x, y}
-    }
-}
-impl Add for Vec2 {
-    type Output = Vec2;
-
-    fn add(self, other: Vec2) -> Vec2 {
-        Vec2 {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-struct Bot {
-    p: Vec2,
-    v: Vec2
-}
-impl Bot {
-    fn move_bot(&mut self, w: i32, h: i32) {
-        // get new_p, if its more, get that with mod, add max to shift it
-        // then use mod again to wrap again if still bigger.
-        let new_p = self.p + self.v;
-        self.p = Vec2 {
-            x: (new_p.x % w + w) % w,
-            y: (new_p.y % h + h) % h,
-        };
-    }
-    fn get_quad(&self, w: i32, h: i32) -> Option<Quads> {
-        if self.p.x < w / 2 && self.p.y < h / 2 {
-            Some(Quads::NE)
-        } else if self.p.x < w / 2 && self.p.y > h / 2 {
-            Some(Quads::SE)
-        } else if self.p.x > w / 2 && self.p.y < h / 2 {
-            Some(Quads::NW)
-        } else if self.p.x > w / 2 && self.p.y > h / 2 {
-            Some(Quads::SW)
-        } else {
-            // on the boundary
-            None
-        }
-    }
-}
-
-enum Quads {
-    NW,
-    NE,
-    SW,
-    SE,
-}
-
 pub fn run() -> io::Result<()> {
     let start = Instant::now();
     let args: Vec<String> = std::env::args().collect();
@@ -113,4 +54,63 @@ pub fn run() -> io::Result<()> {
     println!("Time taken: {:?}", start.elapsed());
 
     Ok(())
+}
+
+#[derive(Debug, Clone)]
+struct Bot {
+    p: Vec2,
+    v: Vec2
+}
+impl Bot {
+    fn move_bot(&mut self, w: i32, h: i32) {
+        // get new_p, if its more, get that with mod, add max to shift it
+        // then use mod again to wrap again if still bigger.
+        let new_p = self.p + self.v;
+        self.p = Vec2 {
+            x: (new_p.x % w + w) % w,
+            y: (new_p.y % h + h) % h,
+        };
+    }
+    fn get_quad(&self, w: i32, h: i32) -> Option<Quads> {
+        if self.p.x < w / 2 && self.p.y < h / 2 {
+            Some(Quads::NE)
+        } else if self.p.x < w / 2 && self.p.y > h / 2 {
+            Some(Quads::SE)
+        } else if self.p.x > w / 2 && self.p.y < h / 2 {
+            Some(Quads::NW)
+        } else if self.p.x > w / 2 && self.p.y > h / 2 {
+            Some(Quads::SW)
+        } else {
+            // on the boundary
+            None
+        }
+    }
+}
+
+enum Quads {
+    NW,
+    NE,
+    SW,
+    SE,
+}
+
+#[derive(Debug, Copy, Clone)]
+struct Vec2 {
+    x: i32,
+    y: i32
+}
+impl Vec2 {
+    fn new(x: i32, y: i32) -> Vec2 {
+        Vec2{x, y}
+    }
+}
+impl Add for Vec2 {
+    type Output = Vec2;
+
+    fn add(self, other: Vec2) -> Vec2 {
+        Vec2 {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
 }
