@@ -1,6 +1,6 @@
 use std::fs::File;
 use std::fmt::{Display, Formatter};
-use std::ops::{Deref, DerefMut};
+use std::ops::{Add, Sub, Deref, DerefMut};
 use std::time::Instant;
 use std::io::{self, Read};
 use std::env;
@@ -35,10 +35,10 @@ pub fn run() -> io::Result<()> {
     println!("{}",map);
     println!("Moves: {:?}", moves);
     for m in moves {
-        println!("{:?}",map.bot_pos);
+        println!();
         map.apply_move(m);
+        println!("{}",map);
     }
-    println!("{:?}",map.bot_pos);
     println!();
     println!("{}",map);
     println!("Part 1: {}", map.part1_total());
@@ -46,45 +46,10 @@ pub fn run() -> io::Result<()> {
     Ok(())
 }
 
-#[derive(Debug,Clone,Copy)]
-enum Moves {
-    L,
-    R,
-    U,
-    D,
-}
-impl Moves {
-    fn to_v(self) -> (isize,isize) {
-        match self {
-            Moves::L => (-1,0),
-            Moves::R => (1,0),
-            Moves::U => (0,-1),
-            Moves::D => (0,1),
-        }
-    }
-}
-#[derive(Debug,Clone,Copy,PartialEq)]
-enum Space {
-    Empty,
-    Wall,
-    Box,
-    Robot,
-}
-impl Display for Space {
-    fn fmt(&self, fmt:&mut Formatter) -> Result<(), std::fmt::Error> {
-        fmt.write_str(match self {
-            Space::Robot => "@",
-            Space::Box => "O",
-            Space::Wall => "#",
-            Space::Empty => ".",
-        })
-    }
-}
-
 #[derive(Debug,Clone,PartialEq)]
 struct Room {
     map: Vec<Vec<Space>>,
-    bot_pos: (usize,usize),
+    bot_pos: Vec2,
 }
 impl Room {
     fn part1_total(&self) -> usize {
@@ -98,9 +63,75 @@ impl Room {
         }
         total
     }
+    fn get_pos(&self, p: Vec2) -> Option<Space> {
+        if let Some(row) = self.get(p.x as usize) {
+            row.get(p.y as usize).copied()
+        } else {
+            None
+        }
+    }
+    fn set_pos(&mut self, p: Vec2, val: Space) {
+        if let Some(row) = self.get_mut(p.x as usize) {
+            if let Some(v) = row.get_mut(p.y as usize) {
+                *v = val;
+            }
+        };
+    }
     fn apply_move(&mut self, m: Moves) {
-        let (dx,dy) = m.to_v();
-        //TODO:
+        let v = m.to_v();
+        let mut newpos = self.bot_pos;
+        while let Some(space) = self.get_pos(newpos) {
+            match space {
+                Space::Wall => break,
+                Space::Empty => {
+                    self.set_pos(self.bot_pos, Space::Empty);
+                    self.set_pos(newpos, Space::Box);
+                    self.bot_pos = self.bot_pos + v;
+                    self.set_pos(self.bot_pos, Space::Robot);
+                    break
+                },
+                Space::Box => {},
+                Space::Robot => {},
+            }
+            newpos = newpos + v;
+        }
+    }
+}
+impl std::str::FromStr for Room {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut map = Vec::new();
+        let mut bot_pos: Option<Vec2> = None;
+        for (i, line) in s.lines().enumerate() {
+            let mut row = Vec::new();
+            for (j, c) in line.chars().enumerate() {
+                match c {
+                    '.' => row.push(Space::Empty),
+                    '#' => row.push(Space::Wall),
+                    'O' => row.push(Space::Box),
+                    '@' => {
+                        if bot_pos.is_some() { return Err("Multiple robots".to_string()); }
+                        bot_pos = Some(Vec2::new(i as i32,j as i32));
+                        row.push(Space::Robot);
+                    },
+                    _ => {},
+                }
+            }
+            if row.is_empty() { continue; }
+            map.push(row);
+        }
+        let mut x = map[0].len();
+        for row in map.iter() {
+            if row.len() != x {
+                return Err("Map is irregular".to_string());
+            } else {
+                x = row.len();
+            }
+        }
+        match bot_pos { 
+            None => Err("Robot not found".to_string()),
+            Some(bp) => Ok(Room { map, bot_pos: bp}),
+        }
     }
 }
 impl Deref for Room {
@@ -130,40 +161,66 @@ impl Display for Room {
         fmt.write_str(&res)
     }
 }
-impl std::str::FromStr for Room {
-    type Err = String;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut map = Vec::new();
-        let mut bot_pos: Option<(usize,usize)> = None;
-        for (i, line) in s.lines().enumerate() {
-            let mut row = Vec::new();
-            for (j, c) in line.chars().enumerate() {
-                match c {
-                    '.' => row.push(Space::Empty),
-                    '#' => row.push(Space::Wall),
-                    'O' => row.push(Space::Box),
-                    '@' => {
-                        if bot_pos.is_some() { return Err("Multiple robots".to_string()); }
-                        bot_pos = Some((i,j));
-                        row.push(Space::Robot);
-                    },
-                    _ => {},
-                }
-            }
-            if row.is_empty() { continue; }
-            map.push(row);
+
+#[derive(Debug, Copy, Clone,PartialEq)]
+struct Vec2 {
+    x: i32,
+    y: i32
+}
+impl Vec2 {
+    fn new(x: i32, y: i32) -> Vec2 {
+        Vec2{x, y}
+    }
+}
+impl Add for Vec2 {
+    type Output = Vec2;
+    fn add(self, other: Vec2) -> Vec2 {
+        Vec2 {
+            x: self.x + other.x,
+            y: self.y + other.y,
         }
-        let mut x = map[0].len();
-        for row in map.iter() {
-            if row.len() != x {
-                return Err("Map is irregular".to_string());
-            } else {
-                x = row.len();
-            }
+    }
+}
+impl Sub for Vec2 {
+    type Output = Vec2;
+    fn sub(self, other: Vec2) -> Vec2 {
+        Vec2 {
+            x: self.x - other.x,
+            y: self.y - other.y,
         }
-        match bot_pos { 
-            None => Err("Robot not found".to_string()),
-            Some(bp) => Ok(Room { map, bot_pos: bp }),
+    }
+}
+#[derive(Debug,Clone,Copy)]
+enum Moves {
+    L,
+    R,
+    U,
+    D,
+}
+impl Moves {
+    fn to_v(self) -> Vec2 {
+        match self {
+            Moves::L => Vec2::new(0,-1),
+            Moves::R => Vec2::new(0,1),
+            Moves::U => Vec2::new(-1,0),
+            Moves::D => Vec2::new(1,0),
         }
+    }
+}
+#[derive(Debug,Clone,Copy,PartialEq)]
+enum Space {
+    Empty,
+    Wall,
+    Box,
+    Robot,
+}
+impl Display for Space {
+    fn fmt(&self, fmt:&mut Formatter) -> Result<(), std::fmt::Error> {
+        fmt.write_str(match self {
+            Space::Robot => "@",
+            Space::Box => "O",
+            Space::Wall => "#",
+            Space::Empty => ".",
+        })
     }
 }
