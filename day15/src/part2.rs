@@ -110,11 +110,11 @@ impl Room {
                         let mut nexts = Some(HashSet::from_iter([p]));
                         for bp in b {
                             if let Some(ref mut n) = nexts {
+                                n.insert(bp);
                                 let nr = self.check_move(m,bp+m.to_vec2());
                                 match nr {
                                     Some(r) => {
                                         for v in r {
-                                            n.insert(bp);
                                             n.insert(v);
                                         }
                                     },
