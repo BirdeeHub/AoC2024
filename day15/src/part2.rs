@@ -103,13 +103,13 @@ impl std::str::FromStr for Room {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut map = Vec::new();
         let mut bot_pos: Option<Vec2> = None;
-        for (i, line) in s.lines().enumerate() {
+        for (j, line) in s.lines().enumerate() {
             let mut row = Vec::new();
-            for (j, c) in line.chars().enumerate() {
+            for (i, c) in line.chars().enumerate() {
                 match c {
                     '.' => row.push(Space::Empty),
                     '#' => row.push(Space::Wall),
-                    'O' => row.push(Space::Box(vec![Vec2::new(j as i32,i as i32)])),
+                    'O' => row.push(Space::Box(vec![Vec2::new(i as i32,j as i32)])),
                     '@' => {
                         if bot_pos.is_some() { return Err("Multiple robots".to_string()); }
                         bot_pos = Some(Vec2::new(i as i32,j as i32));
