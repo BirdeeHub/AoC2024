@@ -101,25 +101,14 @@ impl Room {
             }
         };
     }
+    // returns None if no move should occur
+    // and if a move should occur,
+    // will return the locations of extra box values that should be moved
+    fn check_move(&self, m: Moves) -> Option<Vec<Vec2>> {
+        None
+    }
     fn apply_move(&mut self, m: Moves) {
-        let v = m.to_v();
-        let mut newpos = self.bot_pos;
-        while let Some(space) = self.get_pos(newpos) {
-            //TODO: actually move the intermediate boxes and update their internal vecs
-            match space {
-                Space::Wall => break,
-                Space::Empty => {
-                    self.set_pos(self.bot_pos, Space::Empty);
-                    self.set_pos(newpos, Space::Box(vec![newpos]));
-                    self.bot_pos = self.bot_pos + v;
-                    self.set_pos(self.bot_pos, Space::Robot);
-                    break
-                },
-                Space::Box(_) => {},
-                Space::Robot => {},
-            }
-            newpos = newpos + v;
-        }
+        self.check_move(m);
     }
 }
 impl std::str::FromStr for Room {
