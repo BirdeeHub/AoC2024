@@ -12,6 +12,7 @@ fn read_file(file_path: &str) -> io::Result<String> {
     Ok(contents)
 }
 
+// we could actually make this arbitrary width with [===] but the question says just double
 fn make_doubled(instr: &str) -> String {
     let mut res = String::new();
     for c in instr.chars() {
