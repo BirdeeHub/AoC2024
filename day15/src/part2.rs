@@ -11,6 +11,20 @@ fn read_file(file_path: &str) -> io::Result<String> {
     Ok(contents)
 }
 
+fn make_doubled(instr: &str) -> String {
+    let mut res = String::new();
+    for c in instr.chars() {
+        match c {
+            '#' => res.push_str("##"),
+            'O' => res.push_str("[]"),
+            '.' => res.push_str(".."),
+            '@' => res.push_str("@."),
+            _ => res.push(c),
+        }
+    }
+    res
+}
+
 pub fn run() -> io::Result<()> {
     let start = Instant::now();
     let args: Vec<String> = std::env::args().collect();
@@ -20,7 +34,8 @@ pub fn run() -> io::Result<()> {
     };
     let filetext = read_file(&filepath)?;
     let contents:Vec<&str> = filetext.split("\n\n").collect();
-    let mut map:Room = contents[0].parse().unwrap();
+    let mapstr = make_doubled(contents[0]);
+    let mut map:Room = mapstr.parse().unwrap();
     let movestr = contents[1];
     let mut moves = Vec::new();
     for c in movestr.chars() {
