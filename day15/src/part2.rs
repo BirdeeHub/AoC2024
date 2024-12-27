@@ -105,7 +105,7 @@ impl Room {
         let v = m.to_v();
         let mut newpos = self.bot_pos;
         while let Some(space) = self.get_pos(newpos) {
-            //TODO: actually move the intermediate boxes
+            //TODO: actually move the intermediate boxes and update their internal vecs
             match space {
                 Space::Wall => break,
                 Space::Empty => {

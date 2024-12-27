@@ -1,6 +1,6 @@
 use std::fs::File;
 use std::fmt::{Display, Formatter};
-use std::ops::{Add, Sub, Deref, DerefMut};
+use std::ops::{Add, Deref, DerefMut};
 use std::time::Instant;
 use std::io::{self, Read};
 use std::env;
@@ -176,15 +176,6 @@ impl Add for Vec2 {
         Vec2 {
             x: self.x + other.x,
             y: self.y + other.y,
-        }
-    }
-}
-impl Sub for Vec2 {
-    type Output = Vec2;
-    fn sub(self, other: Vec2) -> Vec2 {
-        Vec2 {
-            x: self.x - other.x,
-            y: self.y - other.y,
         }
     }
 }
