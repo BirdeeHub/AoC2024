@@ -65,8 +65,8 @@ pub fn run() -> io::Result<()> {
             bot.move_bot(room_w, room_h);
             room[bot.p.y as usize][bot.p.x as usize] = true;
         }
-        print_room(&room);
         if find_tree(&bots, &room, temp) {
+            print_room(&room);
             println!("found tree at: {i}");
             trees.push(i);
             thread::sleep(Duration::from_millis(2000));
@@ -77,7 +77,7 @@ pub fn run() -> io::Result<()> {
             break;
         } else {
             hashes.push(hash);
-            println!("{i}\n");
+            //println!("{i}\n");
         };
     }
 
