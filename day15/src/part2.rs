@@ -105,11 +105,40 @@ impl std::str::FromStr for Room {
         let mut bot_pos: Option<Vec2> = None;
         for (j, line) in s.lines().enumerate() {
             let mut row = Vec::new();
+            let mut in_box: Option<Vec<Vec2>> = None;
             for (i, c) in line.chars().enumerate() {
                 match c {
                     '.' => row.push(Space::Empty),
                     '#' => row.push(Space::Wall),
-                    'O' => row.push(Space::Box(vec![Vec2::new(i as i32,j as i32)])),
+                    'O' => {
+                        if in_box.is_none() {
+                            row.push(Space::Box(vec![Vec2::new(i as i32,j as i32)]))
+                        } else {
+                            return Err("Box in a box doesnt need to be on the map...".to_string());
+                        }
+                    },
+                    '[' => {
+                        in_box = Some(vec![Vec2::new(i as i32,j as i32)]);
+                    },
+                    '=' => {
+                        if let Some(ref mut b) = in_box {
+                            b.push(Vec2::new(i as i32,j as i32));
+                        } else {
+                            return Err("No start to box".to_string());
+                        }
+                    },
+                    ']' => {
+                        if let Some(ref mut b) = in_box {
+                            b.push(Vec2::new(i as i32,j as i32));
+                            let blen = b.len();
+                            for _ in 0..blen {
+                                row.push(Space::Box(b.clone()));
+                            }
+                            in_box = None;
+                        } else {
+                            return Err("Unmatched end of box".to_string());
+                        }
+                    },
                     '@' => {
                         if bot_pos.is_some() { return Err("Multiple robots".to_string()); }
                         bot_pos = Some(Vec2::new(i as i32,j as i32));
@@ -122,14 +151,15 @@ impl std::str::FromStr for Room {
             map.push(row);
         }
         let mut x = map[0].len();
-        for row in map.iter() {
+        for (i, row) in map.iter().enumerate() {
             if row.len() != x {
+                println!("{} != {} at {}",row.len(),x,i);
                 return Err("Map is irregular".to_string());
             } else {
                 x = row.len();
             }
         }
-        match bot_pos { 
+        match bot_pos {
             None => Err("Robot not found".to_string()),
             Some(bp) => Ok(Room { map, bot_pos: bp}),
         }
@@ -137,7 +167,6 @@ impl std::str::FromStr for Room {
 }
 impl Deref for Room {
     type Target = Vec<Vec<Space>>;
-
     fn deref(&self) -> &Self::Target {
         &self.map
     }
