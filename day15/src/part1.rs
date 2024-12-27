@@ -35,9 +35,7 @@ pub fn run() -> io::Result<()> {
     println!("{}",map);
     println!("Moves: {:?}", moves);
     for m in moves {
-        println!();
         map.apply_move(m);
-        println!("{}",map);
     }
     println!();
     println!("{}",map);
@@ -102,9 +100,9 @@ impl std::str::FromStr for Room {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut map = Vec::new();
         let mut bot_pos: Option<Vec2> = None;
-        for (i, line) in s.lines().enumerate() {
+        for (j, line) in s.lines().enumerate() {
             let mut row = Vec::new();
-            for (j, c) in line.chars().enumerate() {
+            for (i, c) in line.chars().enumerate() {
                 match c {
                     '.' => row.push(Space::Empty),
                     '#' => row.push(Space::Wall),

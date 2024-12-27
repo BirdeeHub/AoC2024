@@ -18,10 +18,10 @@ pub fn run() -> io::Result<()> {
         Some(fp) => fp.to_string(),
         _ => env::var("AOC_INPUT").expect("AOC_INPUT not set")
     };
-    let contents = read_file(&filepath).unwrap();
-    let inparts:Vec<&str> = contents.split("\n\n").collect();
-    let mut map:Room = inparts[0].parse().unwrap();
-    let movestr = inparts[1];
+    let filetext = read_file(&filepath)?;
+    let contents:Vec<&str> = filetext.split("\n\n").collect();
+    let mut map:Room = contents[0].parse().unwrap();
+    let movestr = contents[1];
     let mut moves = Vec::new();
     for c in movestr.chars() {
         match c {
@@ -35,9 +35,9 @@ pub fn run() -> io::Result<()> {
     println!("{}",map);
     println!("Moves: {:?}", moves);
     for m in moves {
-        println!();
+        //println!();
         map.apply_move(m);
-        println!("{}",map);
+        //println!("{}",map);
     }
     println!();
     println!("{}",map);
