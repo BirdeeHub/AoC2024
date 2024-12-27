@@ -70,9 +70,19 @@ impl Room {
     fn part2_total(&self) -> usize {
         let mut total = 0;
         for (i, row) in self.iter().enumerate() {
+            let mut lastbox: Option<Vec<Vec2>> = None;
             for (j, space) in row.iter().enumerate() {
-                if let Space::Box(_) = space {
-                    total += i*100+j;
+                if let Space::Box(positions) = space.clone() {
+                    let lbpos = positions.clone();
+                    if let Some(ref lb) = lastbox {
+                        if *lb != lbpos {
+                            total += i*100+j;
+                        }
+                        lastbox = Some(lbpos);
+                    } else {
+                        lastbox = Some(lbpos);
+                        total += i*100+j;
+                    }
                 }
             }
         }
