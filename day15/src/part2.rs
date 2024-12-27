@@ -104,12 +104,12 @@ impl Room {
     // TODO:
     // returns None if no move should occur
     // and if a move should occur,
-    // will return all locations of extra Space::Box values that should be moved
-    fn check_move(&self, m: Moves) -> Option<Vec<Vec2>> {
+    // will return all locations of any extra Space::Box values that should be moved
+    fn check_move(&self, m: Moves, last: Vec<Vec2>) -> Option<Vec<Vec2>> {
         None
     }
     fn apply_move(&mut self, m: Moves) {
-        if let Some(boxes) = self.check_move(m) {
+        if let Some(boxes) = self.check_move(m,vec![]) {
             //TODO: move the robot
             //TODO: move the boxes, which requires getting the value,
             // removing it from its old location,
