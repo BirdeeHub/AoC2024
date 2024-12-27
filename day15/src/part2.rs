@@ -103,9 +103,8 @@ impl Room {
         };
     }
     fn check_move(&self, m: Moves, last: Option<Vec2>) -> Option<HashSet<Vec2>> {
-        println!("Checking move: {:?} last: {:?}",m, last);
         if let Some(p) = last {
-            match self.get_pos(p + m.to_vec2()) {
+            match self.get_pos(p) {
                 Some(Space::Box(b)) => {
                     match m {
                         Moves::U | Moves::D => {
@@ -123,12 +122,19 @@ impl Room {
                                     }
                                 }
                             }
+                            println!("{:?}",nexts);
                             nexts
                         },
-                        _ => self.check_move(m,Some(p + m.to_vec2())),
+                        _ => self.check_move(m,Some(p + m.to_vec2())).map(|v|{
+                            let mut n = v.clone();
+                            n.insert(p);
+                            n
+                        }),
                     }
                 },
-                Some(Space::Empty) => Some(HashSet::from_iter([p])),
+                Some(Space::Empty) => {
+                    Some(HashSet::new())
+                },
                 _ => None,
             }
         } else {
@@ -137,12 +143,20 @@ impl Room {
     }
     fn apply_move(&mut self, m: Moves) {
         if let Some(boxes) = self.check_move(m,None) {
-            println!("{:?}",boxes);
-            //TODO: move the robot
-            //TODO: move the boxes, which requires getting the value,
-            // removing it from its old location,
-            // adding m.to_vec2() to the location
-            // adding m.to_vec2() mapped over each vec of vec2 in the boxes
+            let mut new_boxes = Vec::new();
+            for bp in boxes {
+                println!("{:?}",bp);
+                if let Space::Box(b) = self.get_pos(bp).expect("you returned a box that doesnt exist") {
+                    self.set_pos(bp,Space::Empty);
+                    new_boxes.push((bp+m.to_vec2(),Space::Box(b.iter().map(|p|*p+m.to_vec2()).collect())));
+                }
+            }
+            for (pos,space) in new_boxes {
+                self.set_pos(pos,space);
+            }
+            self.set_pos(self.bot_pos,Space::Empty);
+            self.bot_pos = self.bot_pos + m.to_vec2();
+            self.set_pos(self.bot_pos,Space::Robot);
         };
     }
 }
