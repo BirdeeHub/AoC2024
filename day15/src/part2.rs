@@ -102,47 +102,43 @@ impl Room {
             }
         };
     }
-    fn check_move(&self, m: Moves, last: Option<Vec2>) -> Option<HashSet<Vec2>> {
-        if let Some(p) = last {
-            match self.get_pos(p) {
-                Some(Space::Box(b)) => {
-                    match m {
-                        Moves::U | Moves::D => {
-                            let mut nexts = Some(HashSet::from_iter([p]));
-                            for bp in b {
-                                if let Some(ref mut n) = nexts {
-                                    let nr = self.check_move(m,Some(bp+m.to_vec2()));
-                                    match nr {
-                                        Some(r) => {
-                                            for v in r {
-                                                n.insert(v);
-                                            }
-                                        },
-                                        _ => nexts = None,
-                                    }
+    fn check_move(&self, m: Moves, p: Vec2) -> Option<HashSet<Vec2>> {
+        match self.get_pos(p) {
+            Some(Space::Box(b)) => {
+                match m {
+                    Moves::U | Moves::D => {
+                        let mut nexts = Some(HashSet::from_iter([p]));
+                        for bp in b {
+                            if let Some(ref mut n) = nexts {
+                                let nr = self.check_move(m,bp+m.to_vec2());
+                                match nr {
+                                    Some(r) => {
+                                        for v in r {
+                                            n.insert(v);
+                                        }
+                                    },
+                                    _ => nexts = None,
                                 }
                             }
-                            println!("{:?}",nexts);
-                            nexts
-                        },
-                        _ => self.check_move(m,Some(p + m.to_vec2())).map(|v|{
-                            let mut n = v.clone();
-                            n.insert(p);
-                            n
-                        }),
-                    }
-                },
-                Some(Space::Empty) => {
-                    Some(HashSet::new())
-                },
-                _ => None,
-            }
-        } else {
-            self.check_move(m, Some(self.bot_pos + m.to_vec2()))
+                        }
+                        println!("{:?}",nexts);
+                        nexts
+                    },
+                    _ => self.check_move(m,p + m.to_vec2()).map(|v|{
+                        let mut n = v.clone();
+                        n.insert(p);
+                        n
+                    }),
+                }
+            },
+            Some(Space::Empty) => {
+                Some(HashSet::new())
+            },
+            _ => None,
         }
     }
     fn apply_move(&mut self, m: Moves) {
-        if let Some(boxes) = self.check_move(m,None) {
+        if let Some(boxes) = self.check_move(m,self.bot_pos+m.to_vec2()) {
             let mut new_boxes = Vec::new();
             for bp in boxes {
                 println!("{:?}",bp);
