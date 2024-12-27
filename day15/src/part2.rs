@@ -102,10 +102,6 @@ impl Room {
             }
         };
     }
-    // TODO:
-    // returns None if no move should occur
-    // and if a move should occur,
-    // will return all locations of any extra Space::Box values that should be moved
     fn check_move(&self, m: Moves, last: Option<Vec2>) -> Option<HashSet<Vec2>> {
         println!("Checking move: {:?} last: {:?}",m, last);
         if let Some(p) = last {
