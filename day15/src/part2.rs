@@ -41,7 +41,7 @@ pub fn run() -> io::Result<()> {
     }
     println!();
     println!("{}",map);
-    println!("Part 2: {}", map.part1_total());
+    println!("Part 1: {}", map.part1_total());
     println!("Time taken: {:?}", start.elapsed());
     Ok(())
 }
@@ -56,7 +56,7 @@ impl Room {
         let mut total = 0;
         for (i, row) in self.iter().enumerate() {
             for (j, space) in row.iter().enumerate() {
-                if let Space::Box = space {
+                if let Space::Box(_) = space {
                     total += i*100+j;
                 }
             }
@@ -65,7 +65,7 @@ impl Room {
     }
     fn get_pos(&self, p: Vec2) -> Option<Space> {
         if let Some(row) = self.get(p.y as usize) {
-            row.get(p.x as usize).copied()
+            row.get(p.x as usize).cloned()
         } else {
             None
         }
@@ -85,12 +85,12 @@ impl Room {
                 Space::Wall => break,
                 Space::Empty => {
                     self.set_pos(self.bot_pos, Space::Empty);
-                    self.set_pos(newpos, Space::Box);
+                    self.set_pos(newpos, Space::Box(vec![newpos]));
                     self.bot_pos = self.bot_pos + v;
                     self.set_pos(self.bot_pos, Space::Robot);
                     break
                 },
-                Space::Box => {},
+                Space::Box(_) => {},
                 Space::Robot => {},
             }
             newpos = newpos + v;
@@ -108,7 +108,7 @@ impl std::str::FromStr for Room {
                 match c {
                     '.' => row.push(Space::Empty),
                     '#' => row.push(Space::Wall),
-                    'O' => row.push(Space::Box),
+                    'O' => row.push(Space::Box(vec![Vec2::new(i as i32,j as i32)])),
                     '@' => {
                         if bot_pos.is_some() { return Err("Multiple robots".to_string()); }
                         bot_pos = Some(Vec2::new(i as i32,j as i32));
@@ -207,18 +207,18 @@ impl Moves {
         }
     }
 }
-#[derive(Debug,Clone,Copy,PartialEq)]
+#[derive(Debug,Clone,PartialEq)]
 enum Space {
     Empty,
     Wall,
-    Box,
+    Box(Vec<Vec2>),
     Robot,
 }
 impl Display for Space {
     fn fmt(&self, fmt:&mut Formatter) -> Result<(), std::fmt::Error> {
         fmt.write_str(match self {
             Space::Robot => "@",
-            Space::Box => "O",
+            Space::Box(_) => "O",
             Space::Wall => "#",
             Space::Empty => ".",
         })
