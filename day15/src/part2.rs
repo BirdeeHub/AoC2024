@@ -64,15 +64,15 @@ impl Room {
         total
     }
     fn get_pos(&self, p: Vec2) -> Option<Space> {
-        if let Some(row) = self.get(p.y as usize) {
-            row.get(p.x as usize).copied()
+        if let Some(row) = self.get(p.x as usize) {
+            row.get(p.y as usize).copied()
         } else {
             None
         }
     }
     fn set_pos(&mut self, p: Vec2, val: Space) {
-        if let Some(row) = self.get_mut(p.y as usize) {
-            if let Some(v) = row.get_mut(p.x as usize) {
+        if let Some(row) = self.get_mut(p.x as usize) {
+            if let Some(v) = row.get_mut(p.y as usize) {
                 *v = val;
             }
         };
@@ -200,10 +200,10 @@ enum Moves {
 impl Moves {
     fn to_v(self) -> Vec2 {
         match self {
-            Moves::L => Vec2::new(-1,0),
-            Moves::R => Vec2::new(1,0),
-            Moves::U => Vec2::new(0,-1),
-            Moves::D => Vec2::new(0,1),
+            Moves::L => Vec2::new(0,-1),
+            Moves::R => Vec2::new(0,1),
+            Moves::U => Vec2::new(-1,0),
+            Moves::D => Vec2::new(1,0),
         }
     }
 }
