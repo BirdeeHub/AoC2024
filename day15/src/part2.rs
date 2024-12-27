@@ -51,9 +51,9 @@ pub fn run() -> io::Result<()> {
     println!("{}",map);
     println!("Moves: {:?}", moves);
     for m in moves {
-        println!();
+        //println!();
         map.apply_move(m);
-        println!("{}",map);
+        //println!("{}",map);
     }
     println!();
     println!("{}",map);
@@ -122,7 +122,6 @@ impl Room {
                                 }
                             }
                         }
-                        println!("{:?}",nexts);
                         nexts
                     },
                     _ => self.check_move(m,p + m.to_vec2()).map(|v|{
@@ -142,7 +141,6 @@ impl Room {
         if let Some(boxes) = self.check_move(m,self.bot_pos+m.to_vec2()) {
             let mut new_boxes = Vec::new();
             for bp in boxes {
-                println!("{:?}",bp);
                 if let Space::Box(b) = self.get_pos(bp).expect("you returned a box that doesnt exist") {
                     self.set_pos(bp,Space::Empty);
                     new_boxes.push((bp+m.to_vec2(),Space::Box(b.iter().map(|p|*p+m.to_vec2()).collect())));
