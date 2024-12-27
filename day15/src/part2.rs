@@ -41,7 +41,7 @@ pub fn run() -> io::Result<()> {
     }
     println!();
     println!("{}",map);
-    println!("Part 1: {}", map.part1_total());
+    println!("Part 2: {}", map.part2_total());
     println!("Time taken: {:?}", start.elapsed());
     Ok(())
 }
@@ -52,7 +52,7 @@ struct Room {
     bot_pos: Vec2,
 }
 impl Room {
-    fn part1_total(&self) -> usize {
+    fn part2_total(&self) -> usize {
         let mut total = 0;
         for (i, row) in self.iter().enumerate() {
             for (j, space) in row.iter().enumerate() {
