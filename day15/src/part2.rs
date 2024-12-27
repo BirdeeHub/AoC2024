@@ -41,7 +41,7 @@ pub fn run() -> io::Result<()> {
     }
     println!();
     println!("{}",map);
-    println!("Part 1: {}", map.part1_total());
+    println!("Part 2: {}", map.part1_total());
     println!("Time taken: {:?}", start.elapsed());
     Ok(())
 }
