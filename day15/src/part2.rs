@@ -152,7 +152,12 @@ impl Display for Room {
         let mut iter = self.iter();
         while let Some(row) = iter.next() {
             for space in row.iter() {
-                res.push_str(&format!("{}",space));
+                res.push_str(match space {
+                    Space::Robot => "@",
+                    Space::Box(_) => "O",
+                    Space::Wall => "#",
+                    Space::Empty => ".",
+                });
             }
             if iter.len() > 0 {
                 res.push('\n');
@@ -213,14 +218,4 @@ enum Space {
     Wall,
     Box(Vec<Vec2>),
     Robot,
-}
-impl Display for Space {
-    fn fmt(&self, fmt:&mut Formatter) -> Result<(), std::fmt::Error> {
-        fmt.write_str(match self {
-            Space::Robot => "@",
-            Space::Box(_) => "O",
-            Space::Wall => "#",
-            Space::Empty => ".",
-        })
-    }
 }
