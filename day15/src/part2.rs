@@ -114,6 +114,7 @@ impl Room {
                                 match nr {
                                     Some(r) => {
                                         for v in r {
+                                            n.insert(bp);
                                             n.insert(v);
                                         }
                                     },
