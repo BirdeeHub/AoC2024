@@ -19,7 +19,8 @@ fn make_doubled(instr: &str) -> String {
             'O' => res.push_str("[]"),
             '.' => res.push_str(".."),
             '@' => res.push_str("@."),
-            _ => res.push(c),
+            '\n' => res.push(c),
+            _ => {},
         }
     }
     res
