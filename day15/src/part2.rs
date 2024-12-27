@@ -78,11 +78,10 @@ impl Room {
                         if *lb != lbpos {
                             total += i*100+j;
                         }
-                        lastbox = Some(lbpos);
                     } else {
-                        lastbox = Some(lbpos);
                         total += i*100+j;
                     }
+                    lastbox = Some(lbpos);
                 }
             }
         }
