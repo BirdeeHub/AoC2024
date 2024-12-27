@@ -109,7 +109,7 @@ impl std::str::FromStr for Room {
                 match c {
                     '.' => row.push(Space::Empty),
                     '#' => row.push(Space::Wall),
-                    'O' => row.push(Space::Box(vec![Vec2::new(i as i32,j as i32)])),
+                    'O' => row.push(Space::Box(vec![Vec2::new(j as i32,i as i32)])),
                     '@' => {
                         if bot_pos.is_some() { return Err("Multiple robots".to_string()); }
                         bot_pos = Some(Vec2::new(i as i32,j as i32));
