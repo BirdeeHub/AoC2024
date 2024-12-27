@@ -3,7 +3,7 @@ use std::time::Instant;
 use std::io::{self, BufRead, BufReader};
 use std::env;
 
-#[derive(Debug,Copy,Clone)]
+#[derive(Debug,Copy,Clone,PartialEq)]
 enum Space {
     Empty,
     Wall,
