@@ -101,6 +101,7 @@ impl Room {
             }
         };
     }
+    // TODO:
     // returns None if no move should occur
     // and if a move should occur,
     // will return the locations of extra box values that should be moved
@@ -108,7 +109,13 @@ impl Room {
         None
     }
     fn apply_move(&mut self, m: Moves) {
-        self.check_move(m);
+        if let Some(boxes) = self.check_move(m) {
+            //TODO: move the robot
+            //TODO: move the boxes, which requires getting the value,
+            // removing it from its old location,
+            // adding m.to_vec2() to the location
+            // adding m.to_vec2() mapped over each vec of vec2 in the boxes
+        };
     }
 }
 impl std::str::FromStr for Room {
@@ -268,7 +275,7 @@ enum Moves {
     D,
 }
 impl Moves {
-    fn to_v(self) -> Vec2 {
+    fn to_vec2(self) -> Vec2 {
         match self {
             Moves::L => Vec2::new(-1,0),
             Moves::R => Vec2::new(1,0),
