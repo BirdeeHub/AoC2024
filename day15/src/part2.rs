@@ -106,7 +106,7 @@ impl Room {
     // and if a move should occur,
     // will return all locations of any extra Space::Box values that should be moved
     fn check_move(&self, m: Moves, last: Vec<Vec2>) -> Option<Vec<Vec2>> {
-        let start_at = if last.is_empty() { vec![self.bot_pos] } else { last };
+        let is_first = last.is_empty();
         None
     }
     fn apply_move(&mut self, m: Moves) {
