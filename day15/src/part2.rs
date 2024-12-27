@@ -1,4 +1,5 @@
 use std::fs::File;
+use std::collections::HashSet;
 use std::fmt::{Display, Formatter};
 use std::ops::{Add, Sub, Deref, DerefMut};
 use std::time::Instant;
@@ -105,12 +106,42 @@ impl Room {
     // returns None if no move should occur
     // and if a move should occur,
     // will return all locations of any extra Space::Box values that should be moved
-    fn check_move(&self, m: Moves, last: Vec<Vec2>) -> Option<Vec<Vec2>> {
-        let is_first = last.is_empty();
-        None
+    fn check_move(&self, m: Moves, last: Option<Vec2>) -> Option<HashSet<Vec2>> {
+        println!("Checking move: {:?} last: {:?}",m, last);
+        if let Some(p) = last {
+            match self.get_pos(p + m.to_vec2()) {
+                Some(Space::Box(b)) => {
+                    match m {
+                        Moves::U | Moves::D => {
+                            let mut nexts = Some(HashSet::from_iter([p]));
+                            for bp in b {
+                                if let Some(ref mut n) = nexts {
+                                    let nr = self.check_move(m,Some(bp+m.to_vec2()));
+                                    match nr {
+                                        Some(r) => {
+                                            for v in r {
+                                                n.insert(v);
+                                            }
+                                        },
+                                        _ => nexts = None,
+                                    }
+                                }
+                            }
+                            nexts
+                        },
+                        _ => self.check_move(m,Some(p + m.to_vec2())),
+                    }
+                },
+                Some(Space::Empty) => Some(HashSet::from_iter([p])),
+                _ => None,
+            }
+        } else {
+            self.check_move(m, Some(self.bot_pos + m.to_vec2()))
+        }
     }
     fn apply_move(&mut self, m: Moves) {
-        if let Some(boxes) = self.check_move(m,vec![]) {
+        if let Some(boxes) = self.check_move(m,None) {
+            println!("{:?}",boxes);
             //TODO: move the robot
             //TODO: move the boxes, which requires getting the value,
             // removing it from its old location,
@@ -240,7 +271,7 @@ impl Display for Room {
         fmt.write_str(&res)
     }
 }
-#[derive(Debug, Copy, Clone,PartialEq)]
+#[derive(Debug, Copy, Clone,PartialEq,Eq,Hash)]
 struct Vec2 {
     x: i32,
     y: i32
