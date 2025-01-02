@@ -13,12 +13,7 @@ fn find_tree(bots: &[Bot], room: &[Vec<bool>], temp: f32) -> bool {
         for x in bot.p.x - 1..=bot.p.x + 1 {
             let mut c = false;
             for y in bot.p.y - 1..=bot.p.y + 1 {
-                if x >= 0
-                    && y >= 0
-                    && x < room.len() as i32
-                    && y < room[0].len() as i32
-                    && room[x as usize][y as usize]
-                {
+                if let Some(true) = room.get(x as usize).unwrap_or(&vec![]).get(y as usize) {
                     count += 1;
                     c = true;
                     continue;
