@@ -64,7 +64,7 @@ pub fn run() -> io::Result<()> {
             print_room(&room);
             println!("found tree at: {i}");
             trees.push(i);
-            thread::sleep(Duration::from_millis(2000));
+            //thread::sleep(Duration::from_millis(2000));
         }
         let hash = calculate_hash(&bots);
         if hashes.contains(&hash) {
