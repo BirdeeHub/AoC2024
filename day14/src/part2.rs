@@ -5,7 +5,7 @@ use std::hash::{DefaultHasher, Hash, Hasher};
 use std::io::{self, BufRead, BufReader};
 use std::ops::Add;
 use std::time::Instant;
-use std::{thread, time::Duration};
+//use std::{thread, time::Duration};
 
 fn find_tree(bots: &[Bot], room: &[Vec<bool>], temp: f32) -> bool {
     let mut count = 0;
